@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Swipper video</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="video-container">
+        <div id="videoInfo1" class="video-info">1-video</div>
+        <video id="video1" controls autoplay>
+            <source src="./rain_video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div id="duration1"></div>
+
+        <div id="videoInfo2" class="video-info" style="display: none;">Oxirgi video</div>
+        <video id="video2" controls style="display: none;">
+            <source src="./run_video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div id="duration2" style="display: none;"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
