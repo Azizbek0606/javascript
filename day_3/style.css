@@ -1,0 +1,52 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "roboto mono";
+    list-style: none;
+    text-decoration: none;
+    color: white;
+}
+*::selection{
+    background-color: #3d056bb8;
+}
+body{
+    background: linear-gradient(140deg, #031a61 , #6a287a);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+body h1{
+    width: 450px;
+    height: auto;
+    font-size: 1em;
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 40px;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(40px);
+    position: relative;
+    line-height: 30px;
+    text-align: justify;
+}
+.sub{
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background-color: rgb(165, 0, 170);
+    transform: translate(200px , 70px);
+    z-index: -1;
+    border-radius: 50%;
+    filter: blur(10px);
+}
+.second{
+    position: absolute;
+    transform: translate(-200px , -70px);
+    background-color: rgb(255, 0, 132);
+}
+canvas{
+    position: absolute;
+    background: transparent;
+    z-index: -10;
+}
