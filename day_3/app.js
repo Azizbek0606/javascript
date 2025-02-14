@@ -1,5 +1,6 @@
 let canvas = document.querySelector('canvas');
 
+
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -82,7 +83,11 @@ window.addEventListener("mousemove",
         mouse.y = event.y;
     }
 )
-
+window.addEventListener("resize", function () {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    init();
+})
 class Circle {
     constructor(x, y, dx, dy, radius, color) {
         this.x = x;
@@ -123,15 +128,19 @@ class Circle {
     }
 
 }
+
 let circleArray = [];
-for (let i = 0; i < 200; i++) {
-    let radius = 10;
-    let x = Math.random() * (innerWidth - radius * 2) + radius;
-    let y = Math.random() * (innerHeight - radius * 2) + radius;
-    let dx = (Math.random() - 0.5) * 5;
-    let dy = (Math.random() - 0.5) * 5;
-    let color = '#' + Math.floor(Math.random() * 16777215).toString(16);
-    circleArray.push(new Circle(x, y, dx, dy, radius, color));
+function init() {
+    circleArray = [];
+    for (let i = 0; i < 200; i++) {
+        let radius = Math.random() * 10 + 10;
+        let x = Math.random() * (innerWidth - radius * 2) + radius;
+        let y = Math.random() * (innerHeight - radius * 2) + radius;
+        let dx = (Math.random() - 0.5) * 5;
+        let dy = (Math.random() - 0.5) * 5;
+        let color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+        circleArray.push(new Circle(x, y, dx, dy, radius, color));
+    }
 }
 function animation() {
     requestAnimationFrame(animation);
@@ -141,6 +150,5 @@ function animation() {
     }
 }
 
+init();
 animation();
-
-
