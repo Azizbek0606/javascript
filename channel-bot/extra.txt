@@ -1,0 +1,19 @@
+try {
+    const query = db.prepare('ALTER TABLE users ADD COLUMN email TEXT');
+    query.run();
+    console.log('Yangi ustun muvaffaqiyatli qo\'shildi.');
+} catch (error) {
+    console.error('Xatolik yuz berdi:', error);
+} finally {
+    db.close();
+}
+
+
+yangi ustun qo'shish jadvalga better-sqlite3 yordamida.
+
+////////////////////////////////////////////////////////////////
+
+db.prepare('DROP TABLE users;').run()
+
+id ,name, path, category_id, created_at, decription , updated_at , code , author_id
+id , telegram_id , user_name , first_name , last_name , created_at

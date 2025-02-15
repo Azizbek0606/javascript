@@ -1,0 +1,5 @@
+node_modules
+bot
+package-lock.json
+package.json
+.env
