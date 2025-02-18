@@ -1,5 +1,7 @@
 node_modules
-bot
+data_manager.js
+main.js
 package-lock.json
 package.json
 .env
+data

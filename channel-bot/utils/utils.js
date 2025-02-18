@@ -22,10 +22,10 @@ function generateFileCode() {
 }
 
 function checkFileCode(code) {
-    return /^[a-z][0-9]{5}$/.test(code);
+    return /^[a-zA-Z][0-9]{5}$/.test(code);
 }
 function checkText(text) {
-    return /^[a-zA-Z\s]{1,15}$/.test(text);
+    return /^[a-zA-Z_]{1,50}$/.test(text);
 }
 function checkNumber(value) {
     return /^\d+$/.test(value);

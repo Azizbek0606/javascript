@@ -11,6 +11,17 @@ function addNewUser(user) {
     stmt.run(user.telegram_id, user.first_name, user.last_name, user.username, user.language_code);
 }
 
+function getAllUserData() {
+    const stmt = db.prepare('SELECT telegram_id, user_name FROM users');
+    const rows = stmt.all();
+    return rows;
+}
+
+function getUserById(userId) {
+    const stmt = db.prepare('SELECT * FROM users WHERE telegram_id =?');
+    const row = stmt.get(userId);
+    return row;
+}
 
 function getCategories() {
     const stmt = db.prepare('SELECT * FROM categories');
@@ -18,6 +29,13 @@ function getCategories() {
     const categoryList = rows.map(category => `${category.id} - ${category.name}`);
     return categoryList;
 }
+
+function getFilesById(categoryId) {
+    const stmt = db.prepare('SELECT * FROM files WHERE category_id =?');
+    const rows = stmt.all(categoryId);
+    return rows;
+}
+
 
 function deleteUser(telegram_id) {
     const stmt = db.prepare("DELETE FROM users WHERE telegram_id = ?");
@@ -53,6 +71,7 @@ function createFile(file) {
         );
 
         console.log(`✅ Fayl qo‘shildi: ${file.fileName}`);
+        return true;
     } catch (error) {
         console.error("❌ Fayl qo‘shishda xatolik:", error.message);
     }
