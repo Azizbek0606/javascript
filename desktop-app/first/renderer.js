@@ -1,11 +1,5 @@
-function lorem() {
-    const num1 = parseFloat(document.getElementById('num1').value);
-    const num2 = parseFloat(document.getElementById('num2').value);
-    const operation = document.getElementById('operation').value;
+const player = document.getElementById('player');
+const playlist = document.getElementById('playlist');
 
-    window.electronAPI.lorem(num1, num2, operation);
-}
-
-window.electronAPI.onResult((event, result) => {
-    document.getElementById('result').innerText = result;
-});
+// Bu yerda keyinroq musiqa fayllarini qo‘shish logikasini yozamiz
+const { ipcRenderer } = require('electron');

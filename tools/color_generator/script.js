@@ -3,7 +3,7 @@ function showMessage(message, color_code) {
     let messageContext = document.createElement('p');
     let closeMessageBox = document.createElement('p');
     closeMessageBox.className = 'close-message';
-    closeMessageBox.textContent = '❌';
+    closeMessageBox.textContent = '✔️';
     messageContext.textContent = message;
     messageBox.id = "message-box";
     messageBox.appendChild(messageContext);

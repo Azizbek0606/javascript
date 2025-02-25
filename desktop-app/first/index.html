@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Calculator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music App</title>
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="./icon.css">
 </head>
 
 <body>
-    <input type="number" id="num1">
-    <input type="number" id="num2">
-    <select id="operation">
-        <option value="+">+</option>
-        <option value="-">-</option>
-        <option value="*">*</option>
-        <option value="/">/</option>
-    </select>
-    <button onclick="lorem()">Calculate</button>
-    <div id="result"></div>
-
-    <script src="renderer.js"></script>
+  <div class="window_control">
+    <button id="close-window">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <button id="minimize">
+      <i class="fa-solid fa-minus"></i>
+    </button>
+  </div>
+  <script src="renderer.js"></script>
 </body>
 
 </html>

@@ -3,21 +3,18 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "roboto mono";
-    color: white;
+    list-style: none;
+    text-decoration: none;
 }
 body{
     width: 100%;
     height: 100vh;
-    background: linear-gradient(45deg, #083932, #000218);
+    background: linear-gradient(135deg, #2d1541, #2b3b56);
+    position: relative;
+    border-radius: 50px;
 }
-h1{
-    width: 520px;
-    height: auto;
-    padding: 20px 0px;
-    border: 1px solid #ffffff50;
-    background-color: #ffffff30;
-    backdrop-filter: blur(20px);
-    border-radius: 30px;
-    display: grid;
-    place-items: center;
+.window_control{
+    position: absolute;
+    top: 20px;
+    left: 20px;
 }
