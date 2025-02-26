@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 const { checkText, generateFileCode, checkNumber } = require("../utils/utils");
-const { getCategories, createFile, checkExistingFiles } = require("../data_manager");
+const { getCategories, createFile, checkExistingFiles } = require("../services/data_manager");
 
 const userSteps = {};
 
@@ -86,7 +86,7 @@ async function createNewFile(bot, msg) {
                         fs.unlinkSync(filePath);
                         bot.sendMessage(chatId, `❌ Error saving file data to the database. File has been deleted: ${e.message}`);
                     }
-                delete userSteps[chatId];
+                    delete userSteps[chatId];
                 });
             } catch (error) {
                 console.error("❌ File upload error:", error);

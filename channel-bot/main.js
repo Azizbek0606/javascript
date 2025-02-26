@@ -6,7 +6,7 @@ const bot = new TelegramBot(token, { polling: true });
 
 const { createNewFile, userSteps: createSteps } = require("./commands/create");
 const { updateUser, userSteps: updateSteps } = require("./commands/update");
-
+const { helpCommand } = require("./commands/help");
 function resetUserSession(chatId) {
     if (createSteps[chatId]) delete createSteps[chatId];
     if (updateSteps[chatId]) delete updateSteps[chatId];
@@ -16,7 +16,7 @@ bot.onText(/\/create/, (msg) => {
     const chatId = msg.chat.id;
 
     if (createSteps[chatId] || updateSteps[chatId]) {
-        bot.sendMessage(chatId, "⛔ Siz avvalgi jarayonni yakunlamadingiz! Eski jarayon bekor qilindi.");
+        bot.sendMessage(chatId, "⛔ You are not completing the last process! The last process has been canceled.");
         resetUserSession(chatId);
     }
 
@@ -27,11 +27,15 @@ bot.onText(/\/update/, (msg) => {
     const chatId = msg.chat.id;
 
     if (createSteps[chatId] || updateSteps[chatId]) {
-        bot.sendMessage(chatId, "⛔ Siz avvalgi jarayonni yakunlamadingiz! Eski jarayon bekor qilindi. Qayta buyruq yuboring!");
+        bot.sendMessage(chatId, "⛔ You are not completing the last process! The last process has been canceled.");
         resetUserSession(chatId);
     }
 
     updateUser(bot, msg);
+});
+
+bot.onText(/\/help/, (msg) => {
+    helpCommand(bot, msg);
 });
 
 bot.on("message", (msg) => {
