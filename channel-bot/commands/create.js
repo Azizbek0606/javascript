@@ -28,7 +28,7 @@ async function createNewFile(bot, msg) {
             userData.step = 2;
 
             const categories = getCategories();
-            const categoriesList = categories.map((cat, index) => `${index + 1}. ${cat}`).join('\n');
+            const categoriesList = categories.map((cat) => `${cat}`).join('\n');
             return bot.sendMessage(chatId, `Choose file category (Send only ID)\n\n${categoriesList}\n\nUse a number between 1 and ${categories.length}.`);
 
         case 2:
