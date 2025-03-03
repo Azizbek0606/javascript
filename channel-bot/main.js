@@ -7,6 +7,13 @@ const bot = new TelegramBot(token, { polling: true });
 const { createNewFile, userSteps: createSteps } = require("./commands/create");
 const { updateUser, userSteps: updateSteps } = require("./commands/update");
 const { helpCommand } = require("./commands/help");
+const {
+    allCategory,
+    addCategory,
+    editCategories,
+    removeCategory,
+    getProjectsByCategory
+}= require("./commands/category");
 function resetUserSession(chatId) {
     if (createSteps[chatId]) delete createSteps[chatId];
     if (updateSteps[chatId]) delete updateSteps[chatId];
@@ -49,5 +56,10 @@ bot.on("message", (msg) => {
         updateUser(bot, msg);
     }
 });
+bot.onText(/\/categories/, (msg) => allCategory(msg, bot));
+bot.onText(/\/c_create/, (msg) => addCategory(msg, bot));
+bot.onText(/\/c_delete/, (msg) => removeCategory(msg, bot));
+bot.onText(/\/c_edit/, (msg) => editCategories(msg, bot));
+bot.onText(/\/c_projects/, (msg) => getProjectsByCategory(msg, bot));
 
 module.exports = bot;
