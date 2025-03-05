@@ -1,0 +1,31 @@
+{
+  "name": "wallpaper-manager",
+  "version": "1.0.0",
+  "description": "A powerful desktop application for managing wallpapers with advanced features like automatic switching, grouping, and special collections.",
+  "main": "scripts/main/main.js",
+  "author": "MAJOR",
+  "license": "MIT",
+  "keywords": [
+    "wallpaper",
+    "desktop-app",
+    "electron",
+    "wallpaper-manager",
+    "automatic-switching"
+  ],
+  "scripts": {
+    "start": "electron .",
+    "dev": "NODE_ENV=development electron .",
+    "build": "electron-packager . wallpaper-manager --platform=win32 --arch=x64"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
+    "electron": "^35.0.0",
+    "three": "^0.174.0"
+  },
+  "devDependencies": {
+    "electron-packager": "^17.1.1",
+    "electron-reload": "^2.0.0-alpha.1"
+  }
+}
