@@ -1,0 +1,116 @@
+.login_wrapper{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.login_block_main_wrapper{
+    width: 900px;
+    height: 500px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    border-radius: 70px;
+    padding: 20px;
+    overflow: hidden;
+}
+.swipper_block{
+    width: 1350px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 50px;
+    transition: 0.3s;
+}
+.login_block, .registrate_block{
+    width: 400px;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    position: relative;
+    gap: 30px;
+}
+.login_block{
+    padding-bottom: 60px;
+}
+.login_block h2 , .registrate_block h2{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+.login_block input, .login_block button , .registrate_block input, .registrate_block button{
+    width: 100%;
+    height: 70px;
+    border-radius: 27px;
+    border: none;
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    font-size: 1.2em;
+    padding: 20px;
+}
+.design_block{
+    width: 400px;
+    height: 450px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 20px;
+    border-radius: 50px;
+}
+.design_image{
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+    overflow: hidden;
+}
+.design_image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.bg-sound-controller{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+    position: absolute;
+    bottom: 10px;
+    right: 100px;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+}
+.registrate_block{
+    gap: 20px;
+}
+.registrate_block h2{
+    top: 0px;
+    right: 0;
+}
+.reg_password input{
+    width: 48%;
+    font-size: 0.8em;
+}
+.reg_password{
+    display: flex;
+    justify-content: space-between;
+}
+.active_r_block{
+    display: block;
+}
+.changeReg{
+    color: aqua;
+    text-shadow: 0 0 5px rgba(0, 255, 255, 0.382);
+    cursor: pointer;
+}
+#sendMessage{
+    position: absolute;
+    top: 0;
+    left: 50%;
+}
