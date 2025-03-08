@@ -4,8 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com;">
     <link rel="stylesheet" href="../styles/main.css">
 </head>
 
@@ -25,8 +23,9 @@
         <label for="volumeControl">🔊 Background Sound</label>
         <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.1">
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- <script src="../../node_modules/three/build/three.module.js"></script> -->
     <script type="module" src="../script/bg_animation.js"></script>
+    <script src="../script/utils.js"></script>
 </body>
 
 </html>

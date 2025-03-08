@@ -1,0 +1,15 @@
+{
+  "name": "circle-and-dot",
+  "version": "1.0.0",
+  "main": "abstract.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "three": "^0.174.0"
+  }
+}

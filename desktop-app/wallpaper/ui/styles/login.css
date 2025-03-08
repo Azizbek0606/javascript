@@ -109,8 +109,10 @@
     text-shadow: 0 0 5px rgba(0, 255, 255, 0.382);
     cursor: pointer;
 }
-#sendMessage{
-    position: absolute;
-    top: 0;
-    left: 50%;
+.swipper_block.active {
+    transform: translateX(-450px);
+}
+
+.design_image img.active {
+    content: url("../../assets/resources/images/register/registrate.jpg");
 }

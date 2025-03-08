@@ -1,3 +1,4 @@
+import * as THREE from "../../node_modules/three/build/three.module.js";
 const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x111111, 5, 30);
 
