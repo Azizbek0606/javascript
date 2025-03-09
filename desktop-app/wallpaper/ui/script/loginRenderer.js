@@ -1,14 +1,5 @@
-function showMessage(message, type = "info") {
-    const messageBox = document.createElement("div");
-    messageBox.textContent = message;
-    messageBox.className = `message-box ${type}`;
+import { showMessage } from "./modules/utils/utils";
 
-    document.body.appendChild(messageBox);
-
-    setTimeout(() => {
-        messageBox.remove();
-    }, 3000);
-}
 let swipper_block = document.querySelector(".swipper_block");
 let design_image = document.querySelector(".design_image > img");
 

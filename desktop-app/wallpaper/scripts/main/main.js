@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 import { app, BrowserWindow, ipcMain } from "electron";
-import { loginFunc, signUpFunc } from "../functions/registration.js";
+import { loginFunc, signUpFunc, updateUsername } from "../functions/registration.js";
 import { getSystemUser } from "../services/db_register.js";
 import os from "os";
 
@@ -9,10 +9,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow, loginWindow;
-const systemUsername = os.userInfo().username;
-const checkUser = getSystemUser(systemUsername);
-const userImage = checkUser?.profile_image || "default";
-const this_username = checkUser?.user_name;
 
 function createWindow(type, options, file) {
     let win = new BrowserWindow({
@@ -43,9 +39,6 @@ function createLoginWindow() {
 
 function createMainWindow() {
     mainWindow = createWindow("main", {}, "index");
-    mainWindow.webContents.once("did-finish-load", () => {
-        mainWindow.webContents.send("userData", { user_name: this_username, profile_image: userImage });
-    });
 }
 
 app.whenReady().then(async () => {
@@ -57,6 +50,8 @@ app.whenReady().then(async () => {
             console.error("electron-reload yuklanmadi:", error);
         }
     }
+
+    const checkUser = getSystemUser(os.userInfo().username);
 
     checkUser ? createMainWindow() : createLoginWindow();
 });
@@ -90,7 +85,22 @@ ipcMain.on("register", (event, message) => {
         event.reply("sign-up-error", signUp.error);
     }
 });
-
+ipcMain.on("get-userData", (event) => {
+    const updatedUser = getSystemUser(os.userInfo().username);
+    event.reply("userData", {
+        user_name: updatedUser?.user_name,
+        profile_image: updatedUser?.profile_image || "default"
+    });
+});
+ipcMain.on("updateName", (event, data) => {
+    try {
+        let updatedUser = updateUsername(data);
+        event.reply("updatedStatus", updatedUser);
+    } catch (error) {
+        console.error("Error updating username:", error);
+        event.reply("updatedStatus", { error: "Internal server error" });
+    }
+});
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") app.quit();
 });

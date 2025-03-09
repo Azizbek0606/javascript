@@ -2,3 +2,4 @@ node_modules
 database
 .env
 assets
+path_db.js

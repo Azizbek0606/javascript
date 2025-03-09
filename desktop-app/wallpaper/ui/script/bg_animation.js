@@ -71,7 +71,7 @@ export function stopAudio() {
     soundStatus = false;
 }
 
-const rainCount = 3000;
+const rainCount = 1000;
 const rainGeometry = new THREE.BufferGeometry();
 const rainPositions = new Float32Array(rainCount * 2 * 3);
 const velocities = new Float32Array(rainCount);

@@ -1,5 +1,5 @@
 import os from "os";
-import { getSystemUser , newUser} from "../services/db_register.js";
+import { getSystemUser, newUser, updateUsernamedb } from "../services/db_register.js";
 import bcrypt from "bcrypt";
 
 export function loginFunc(loginData) {
@@ -38,7 +38,7 @@ export function signUpFunc(regData) {
         return { error: "Invalid registration data" };
     }
     let system_user = os.userInfo().username;
-    let currentUsers =  getSystemUser(system_user);
+    let currentUsers = getSystemUser(system_user);
     if (currentUsers) {
         return { error: "User already exists" };
     }
@@ -51,7 +51,31 @@ export function signUpFunc(regData) {
         system_user: system_user,
         email: regData.email
     });
-    
+
     return result;
 }
 
+export function updateUsername(newUsername) {
+    if (!newUsername || typeof newUsername !== "string") {
+        return { error: "Invalid new username" };
+    }
+
+    let systemUser = os.userInfo().username;
+    let userData = getSystemUser(systemUser);
+
+    if (!userData) {
+        return { status: "error", message: "User not found" };
+    }
+    if(newUsername.trim() === userData.user_name){
+        return { status: "error", message: "New username cannot be the same as current username" };
+    }
+
+    let status = updateUsernamedb(newUsername, systemUser);
+
+    if (status.success) {
+        let updatedUser = getSystemUser(systemUser);
+        return { status: "success", message: "Username updated successfully" };
+    } else {
+        return { status: "error", message: "Failed to update username" };
+    }
+}
