@@ -11,5 +11,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
     onLoginSuccess: (callback) => ipcRenderer.on("login-success", callback),
     onLoginError: (callback) => ipcRenderer.on("login-error", (event, message) => callback(message)),
     onRegisterSuccess: (callback) => ipcRenderer.on("sign-up-success", callback),
-    onRegisterError: (callback) => ipcRenderer.on("sign-up-error", (event, message) => callback(message))
+    onRegisterError: (callback) => ipcRenderer.on("sign-up-error", (event, message) => callback(message)),
+    onUserData: (callback) => ipcRenderer.on("userData", (event, data) => callback(data))
 });

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../styles/index.css">
 </head>
 
 <body>
@@ -19,13 +20,68 @@
             <img src="../../assets/resources/images/screen_control/move_screen.png" alt="">
         </div>
     </div>
-    <div class="bg-sound-controller">
-        <label for="volumeControl">🔊 Background Sound</label>
-        <input type="range" id="volumeControl" min="0" max="1" step="0.1" value="0.1">
+    <div class="wrapper">
+        <div class="main_wrapper">
+            <div class="left_side">
+                <div class="account_info main_style">
+                    <div class="account_image">
+                        <img src="" id="profile_image" alt="">
+                    </div>
+                    <div class="account_info_text">
+                        <h2 id="user_name">User name</h2>
+                    </div>
+                    <div class="update_profile">
+                        <img src="../../assets/resources/images/controller/gear.png" alt="">
+                    </div>
+                </div>
+                <div class="bg-sound-controller main_style">
+                    <div class="sound_p_s_button">
+                        <img src="../../assets/resources/images/controller/play.png" class="playSound" alt="">
+                        <img src="../../assets/resources/images/controller/pause.png" class="pauseSound" style="display: none;" alt="">
+                    </div>
+                    <div class="sound_range">
+                        <p>Background Sound</p>
+                        <div class="range_design">
+                            <div class="line_range"></div>
+                            <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.1">
+                        </div>
+                        <div>
+                            <span class="range_percent">
+                                10%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="control_panel main_style">
+                    <div class="setting_box main_style_white">Create</div>
+                    <div class="setting_box main_style_white">Update Groups</div>
+                    <div class="setting_box main_style_white" style="font-size: 14px;">Download From Bot</div>
+                    <div class="setting_box main_style_white">All Images</div>
+                </div>
+            </div>
+            <div class="right_side">
+                <div class="main_block">
+                    <div class="double_info_block">
+                        <div class="wallpaper_inducator main_style"></div>
+                        <div class="weather_information main_style"></div>
+                    </div>
+                    <div class="quote main_style"></div>
+                </div>
+                <div class="bottom_block">
+                    <div class="double_bottom_button ">
+                        <div class="change_group main_style"></div>
+                        <div class="current_group main_style"></div>
+                    </div>
+                    <div class="last_saved_block main_style"></div>
+                    <div class="group_inducator main_style"></div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- <script src="../../node_modules/three/build/three.module.js"></script> -->
     <script type="module" src="../script/bg_animation.js"></script>
     <script src="../script/utils.js"></script>
+    <script type="module" src="../script/indexRender.js"></script>
 </body>
 
 </html>

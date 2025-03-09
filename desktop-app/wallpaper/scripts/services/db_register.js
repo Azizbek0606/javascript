@@ -1,5 +1,6 @@
 import { db } from './path_db.js';
 import bcrypt from 'bcrypt';
+
 export function getSystemUser(systemUName) {
     if (!systemUName || typeof systemUName !== "string") {
         return null;
@@ -41,4 +42,3 @@ export function newUser(userData) {
         return { error: "Error while saving user data" };
     }
 }
-

@@ -50,7 +50,7 @@ const thunderSounds = [
     new Audio("../../assets/resources/sound/thunder/second.mp3"),
     new Audio("../../assets/resources/sound/thunder/third.mp3")
 ];
-
+let soundStatus = false;
 
 const allSounds = [rainSound, ...thunderSounds];
 
@@ -59,14 +59,19 @@ volumeControl.addEventListener("input", (event) => {
     const volume = parseFloat(event.target.value);
     allSounds.forEach(audio => audio.volume = volume);
 });
-
-document.body.addEventListener("click", function startAudio() {
+export function startAudio() {
     rainSound.play().then(() => {
         document.body.removeEventListener("click", startAudio);
     }).catch(error => console.log("Audio autoplay blocked:", error));
-});
+    soundStatus = true;
+}
+export function stopAudio() {
+    rainSound.pause();
+    rainSound.currentTime = 0;
+    soundStatus = false;
+}
 
-const rainCount = 2000;
+const rainCount = 3000;
 const rainGeometry = new THREE.BufferGeometry();
 const rainPositions = new Float32Array(rainCount * 2 * 3);
 const velocities = new Float32Array(rainCount);
@@ -106,7 +111,9 @@ document.body.appendChild(flashBackground);
 function triggerLightning() {
     const sound = thunderSounds[Math.floor(Math.random() * thunderSounds.length)];
     sound.currentTime = 0;
-    sound.play();
+    if(soundStatus){
+        sound.play();
+    }
 
     const randomCloud = clouds[Math.floor(Math.random() * clouds.length)];
     lightning.position.set(randomCloud.position.x, randomCloud.position.y + 5, randomCloud.position.z);
