@@ -31,7 +31,7 @@ function dataUpdateUserName() {
         ]
     });
 }
-window.electronAPI.showUpdatedNameStatus((data) =>{
+window.electronAPI.showUpdatedNameStatus((data) => {
     showMessage(data.message, data.status);
 })
 function dataUpdateEmail() {
@@ -40,21 +40,46 @@ function dataUpdateEmail() {
         inputs: [{ label: "New Email", type: "text", placeholder: "Enter new Email" }],
         buttons: [
             { text: "Cancel", class: "cancel-btn", action: () => { } },
-            { text: "Save", class: "apply-btn", action: (values) => console.log("New Email:", values[0]) }
+            {
+                text: "Save", class: "apply-btn", action: (values) => {
+                    window.myAPI.updateEmail(values[0]);
+                }
+            }
         ]
     });
 }
 function dataUpdateProfileImage() {
     createModal({
         title: "Update Profile Image",
-        inputs: [{ label: "Profile Image", type: "file" }],
+        inputs: [{ label: "Profile Image", type: "file", accept: ".png, .jpg, .jpeg" }],
         buttons: [
             { text: "Cancel", class: "cancel-btn", action: () => { } },
-            { text: "Upload", class: "apply-btn", action: (values) => console.log("Uploaded image:", values[0]) }
+            {
+                text: "Upload",
+                class: "apply-btn",
+                action: (values) => {
+                    if (values[0]) {
+                        const file = values[0];
+                        const reader = new FileReader();
+
+                        reader.onload = (event) => {
+                            const buffer = event.target.result;
+                            window.myAPI.uploadProfileImage({
+                                name: file.name,
+                                buffer
+                            });
+                        };
+
+                        reader.readAsArrayBuffer(file);
+                    }
+                }
+            }
         ]
     });
 }
-
+window.electronAPI.profileImageSaved((data) => {
+    showMessage(data.message, data.status);
+});
 function dataUpdatePassword() {
     createModal({
         title: "Update Password",
@@ -64,9 +89,19 @@ function dataUpdatePassword() {
         ],
         buttons: [
             { text: "Cancel", class: "cancel-btn", action: () => { } },
-            { text: "Change", class: "apply-btn", action: (values) => console.log("New password:", values[1]) }
+            {
+                text: "Change", class: "apply-btn", action: (values) => {
+                    if (values[0] && values[1]) {
+                        window.myAPI.updatePassword({ oldPassword: values[0], newPassword: values[1] });
+                    }
+                }
+            }
         ]
     });
 }
-
-
+window.electronAPI.updatePasswordStatus((data) => {
+    showMessage(data.message, data.status);
+})
+window.electronAPI.updateEmailStatus((data) => {
+    showMessage(data.message, data.status);
+});

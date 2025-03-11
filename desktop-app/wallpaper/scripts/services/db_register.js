@@ -8,7 +8,6 @@ export function getSystemUser(systemUName) {
 
     return db.prepare("SELECT * FROM users WHERE system_user = ?").get(systemUName) || null;
 }
-
 export function newUser(userData) {
     if (
         !userData || typeof userData !== "object" ||
@@ -46,5 +45,21 @@ export function updateUsernamedb(newUsername, system_user) {
     const updateUser = db.prepare(`UPDATE users SET user_name = ? WHERE system_user = ?`);
     let status = updateUser.run(newUsername, system_user);
 
+    return status.changes > 0 ? { success: true } : { success: false };
+}
+export function updateAvatardb(imagePath, systemUsername) {
+    const updateUser = db.prepare(`UPDATE users SET profile_image =? WHERE system_user =?`);
+    let status = updateUser.run(imagePath, systemUsername);
+    return status.changes > 0 ? { success: true } : { success: false };
+}
+export function updatePassworddb(newPassword, system_user) {
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+    const updateUser = db.prepare(`UPDATE users SET password =? WHERE system_user =?`);
+    let status = updateUser.run(hashedPassword, system_user);
+    return status.changes > 0 ? { success: true } : { success: false };
+}
+export function updateEmaildb(newEmail, system_user) {
+    const updateUser = db.prepare(`UPDATE users SET email =? WHERE system_user =?`);
+    let status = updateUser.run(newEmail, system_user);
     return status.changes > 0 ? { success: true } : { success: false };
 }

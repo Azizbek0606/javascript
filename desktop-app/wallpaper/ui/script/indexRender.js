@@ -28,11 +28,15 @@ document.querySelector(".sound_p_s_button").addEventListener("click", () => {
 })
 window.myAPI.getProfileInfo();
 
-let defaultImage = "../../assets/resources/images/register/login.jpg"
-
-window.electronAPI.userData((data) => {    
-    document.querySelector("#user_name").textContent = data.user_name;
+let defaultImage = "../../assets/resources/images/controller/userAvatar.png"
+let user_name = document.querySelector("#user_name");
+window.electronAPI.userData((data) => {
+    user_name.textContent = data.user_name;
     document.querySelector("#profile_image").src = data.profile_image !== "default" ? data.profile_image : defaultImage;
+
+    if (user_name.offsetWidth > user_name.parentElement.clientWidth) {
+        user_name.classList.add("scrolling-text");
+    } else {
+        user_name.classList.remove("scrolling-text");
+    }
 });
-
-

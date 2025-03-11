@@ -1,9 +1,12 @@
 import path from "path";
+import os from "os";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import { app, BrowserWindow, ipcMain } from "electron";
-import { loginFunc, signUpFunc, updateUsername } from "../functions/registration.js";
+import { loginFunc, signUpFunc, updateUsername, addAvatarToProfile, updatePassword, updateEmail } from "../functions/registration.js";
 import { getSystemUser } from "../services/db_register.js";
-import os from "os";
+import { getGroups } from "../services/db_manager.js";
+import { saveWallpaper } from "../functions/wallpaperMethod.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -85,25 +88,109 @@ ipcMain.on("register", (event, message) => {
         event.reply("sign-up-error", signUp.error);
     }
 });
-ipcMain.on("get-userData", (event) => {
+
+function sendUserData(event) {
     const updatedUser = getSystemUser(os.userInfo().username);
     event.reply("userData", {
         user_name: updatedUser?.user_name,
         profile_image: updatedUser?.profile_image || "default"
     });
-});
+}
+
+ipcMain.on("get-userData", sendUserData);
+
 ipcMain.on("updateName", (event, data) => {
     try {
         let updatedUser = updateUsername(data);
         event.reply("updatedStatus", updatedUser);
+        if (updatedUser.status == "success") {
+            sendUserData(event);
+        }
     } catch (error) {
         console.error("Error updating username:", error);
-        event.reply("updatedStatus", { error: "Internal server error" });
+        event.reply("updatedStatus", { status: "error", message: "Internal server error" });
+    }
+});
+ipcMain.on("uploadProfileImage", (event, data) => {
+    try {
+        const savePath = path.join(__dirname, "../../database/images/profile_image");
+
+        if (!fs.existsSync(savePath)) {
+            fs.mkdirSync(savePath, { recursive: true });
+        }
+
+        const files = fs.readdirSync(savePath);
+        files.forEach((file) => {
+            const filePath = path.join(savePath, file);
+            fs.unlinkSync(filePath);
+        });
+
+        const filePath = path.join(savePath, data.name);
+        fs.writeFileSync(filePath, Buffer.from(data.buffer));
+
+        let savedbStatus = addAvatarToProfile(filePath);
+        if (savedbStatus.status !== "success") {
+            fs.unlinkSync(filePath);
+            throw new Error("Failed to save image path in database.");
+        } else {
+            sendUserData(event);
+        }
+
+        event.reply("profileImageSaved", savedbStatus);
+
+    } catch (error) {
+        console.error("Error saving image:", error);
+        event.reply("profileImageSaved", { status: "error", message: "Something went wrong while saving image!" });
+    }
+});
+ipcMain.on("updatePassword", (event, data) => {
+    try {
+        let updatedUser = updatePassword(data.oldPassword, data.newPassword);
+        event.reply("updatedPasswordStatus", updatedUser);
+    } catch (error) {
+        console.error("Error updating password:", error);
+        event.reply("updatedPasswordStatus", { status: "error", message: "Internal server error" });
+    }
+});
+ipcMain.on("updateEmail", (event, data) => {
+    try {
+        let updatedUser = updateEmail(data);
+        event.reply("updatedEmailStatus", updatedUser);
+    } catch (error) {
+        console.error("Error updating email:", error);
+        event.reply("updatedEmailStatus", { status: "error", message: "Internal server error" });
     }
 });
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") app.quit();
 });
+function sendGroup(event) {
+    let groups = getGroups();
+    event.reply("groups", groups);
+}
+ipcMain.on("get-groups", sendGroup);
+
+
+ipcMain.on("upload-wallpaper", async (event, data) => {
+    try {
+        if (!data || !data.name || !data.buffer) {
+            throw new Error("Invalid data: image!");
+        }
+
+        const saved = await saveWallpaper({
+            name: data.name,
+            group_id: data.group_id || null,
+            buffer: data.buffer
+        });
+
+        event.reply("upload-wallpaper-success", saved);
+
+    } catch (error) {
+        console.error("Wallpaper upload error:", error);
+        event.reply("upload-wallpaper-success", { status: "error", message: error.message });
+    }
+});
+
 
 app.on("activate", () => {
     if (!mainWindow) createMainWindow();

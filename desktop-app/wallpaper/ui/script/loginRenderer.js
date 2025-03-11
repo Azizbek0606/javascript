@@ -1,4 +1,4 @@
-import { showMessage } from "./modules/utils/utils";
+import { showMessage } from "./modules/utils/utils.js";
 
 let swipper_block = document.querySelector(".swipper_block");
 let design_image = document.querySelector(".design_image > img");
@@ -12,7 +12,12 @@ function setActiveBar(value) {
         design_image.classList.remove("active");
     }
 }
-
+document.querySelector(".open_sing").addEventListener("click", ()=>{
+    setActiveBar(1);
+});
+document.querySelector(".open_login").addEventListener("click", ()=>{
+    setActiveBar(2);
+});
 
 function loginFunc() {
     const userNameInput = document.getElementById("username");

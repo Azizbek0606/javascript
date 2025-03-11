@@ -67,9 +67,17 @@ export function createModal({
                     option.textContent = opt.text;
                     inputField.appendChild(option);
                 });
+            } else if (input.type === "checkbox") {
+                inputField = document.createElement("input");
+                inputField.type = "checkbox";
+                inputField.checked = input.checked || false;
             } else {
                 inputField = document.createElement("input");
                 inputField.type = input.type || "text";
+
+                if (input.type === "file" && input.accept) {
+                    inputField.accept = input.accept;
+                }
             }
 
             inputField.placeholder = input.placeholder || "";
@@ -90,7 +98,7 @@ export function createModal({
         button.className = btn.class || "default-btn";
         button.onclick = () => {
             const values = [...inputContainer.querySelectorAll("input, textarea, select")].map(input =>
-                input.type === "file" ? input.files[0] : input.value
+                input.type === "file" ? input.files[0] : input.type === "checkbox" ? input.checked : input.value
             );
             btn.action(values);
             if (!btn.preventClose) closeModal();

@@ -112,7 +112,6 @@
 .swipper_block.active {
     transform: translateX(-450px);
 }
-
 .design_image img.active {
     content: url("../../assets/resources/images/register/registrate.jpg");
 }

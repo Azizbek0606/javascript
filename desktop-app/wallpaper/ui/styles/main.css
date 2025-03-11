@@ -103,7 +103,7 @@ canvas{
 }
 
 .modal-content {
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.1);
     padding: 30px;
     border-radius: 20px;
     min-width: 450px;
@@ -154,9 +154,10 @@ canvas{
     background-color: rgba(255, 255, 255, 0.2);
     padding: 10px;
     border-radius: 10px;
-    color: white;
 }
-
+.modal-input-wrapper select option{
+    color: black !important;
+}
 .modal-input-wrapper textarea {
     height: 70px;
     resize: none;
@@ -178,17 +179,17 @@ canvas{
 }
 
 .cancel-btn {
-    background-color: rgba(218, 44, 136, 0.91);
+    background-color: rgba(218, 44, 136, 0.4);
     color: white;
 }
 
 .apply-btn {
-    background-color: rgba(30, 163, 105, 0.823);
+    background-color: rgba(30, 163, 105, 0.4);
     color: white;
 }
 .option-btn {
     width: auto;
-    background-color: rgba(33, 65, 153, 0.819);
+    background-color: rgba(33, 65, 153, 0.4);
     color: white;
 }
 .modal-buttons button:hover {
