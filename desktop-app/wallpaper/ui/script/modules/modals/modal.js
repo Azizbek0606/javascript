@@ -65,9 +65,13 @@ export function createModal({
                     const option = document.createElement("option");
                     option.value = opt.value;
                     option.textContent = opt.text;
+                    if (opt.value === input.value) {
+                        option.selected = true;
+                    }
                     inputField.appendChild(option);
                 });
-            } else if (input.type === "checkbox") {
+            }
+            else if (input.type === "checkbox") {
                 inputField = document.createElement("input");
                 inputField.type = "checkbox";
                 inputField.checked = input.checked || false;

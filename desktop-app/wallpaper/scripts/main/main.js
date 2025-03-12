@@ -5,9 +5,10 @@ import { fileURLToPath } from "url";
 import { app, BrowserWindow, ipcMain } from "electron";
 import { loginFunc, signUpFunc, updateUsername, addAvatarToProfile, updatePassword, updateEmail } from "../functions/registration.js";
 import { getSystemUser } from "../services/db_register.js";
-import { getGroups } from "../services/db_manager.js";
-import { saveWallpaper } from "../functions/wallpaperMethod.js";
-
+import { getGroups, getAllImages, getWallpaperById } from "../services/db_manager.js";
+import { saveWallpaper, processWallpapers, deleteWallpaper } from "../functions/wallpaperMethod.js";
+import { updateWallpaperGroup } from "../services/wallpaperCRUD.js";
+import { db } from "../services/path_db.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -165,12 +166,10 @@ app.on("window-all-closed", () => {
     if (process.platform !== "darwin") app.quit();
 });
 function sendGroup(event) {
-    let groups = getGroups();
+    let groups = getGroups();    
     event.reply("groups", groups);
 }
 ipcMain.on("get-groups", sendGroup);
-
-
 ipcMain.on("upload-wallpaper", async (event, data) => {
     try {
         if (!data || !data.name || !data.buffer) {
@@ -190,8 +189,43 @@ ipcMain.on("upload-wallpaper", async (event, data) => {
         event.reply("upload-wallpaper-success", { status: "error", message: error.message });
     }
 });
-
-
+ipcMain.handle("load-images", async (_, { limit, offset }) => {
+    const rawImages = await getAllImages(limit, offset);
+    return processWallpapers(rawImages);
+});
 app.on("activate", () => {
     if (!mainWindow) createMainWindow();
 });
+ipcMain.handle("getWallpaperById", async (event, imageId) => {
+    return getWallpaperById(imageId);
+});
+ipcMain.handle("delete-wallpaper", async (_, imageId) => {
+    try {
+        const success = await deleteWallpaper(imageId);
+        return success;
+    } catch (error) {
+        console.error("Failed to delete wallpaper:", error);
+        return false;
+    }
+});
+ipcMain.handle("updateWallpaperGroup", async (event, imageId, newGroup) => {
+    return updateWallpaperGroup(imageId, newGroup);
+});
+ipcMain.handle("getLikeStatus", async (event, imageId) => {
+    const row = db.prepare("SELECT liked FROM images WHERE id = ?").get(imageId);
+    return row ? !!row.liked : false;
+});
+ipcMain.handle("updateLikeStatus", async (event, imageId, newStatus) => {
+    try {
+        const likeValue = newStatus ? 1 : 0;
+
+        const stmt = db.prepare("UPDATE images SET liked = ? WHERE id = ?");
+        stmt.run(likeValue, imageId);
+
+        return true;
+    } catch (error) {
+        console.error("Like statusni yangilashda xatolik:", error);
+        throw error;
+    }
+});
+

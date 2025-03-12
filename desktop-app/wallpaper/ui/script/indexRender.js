@@ -1,5 +1,4 @@
 import { startAudio, stopAudio } from "./bg_animation.js";
-
 let volumeControl = document.querySelector("#volumeControl");
 let rangePercent = document.querySelector(".range_percent");
 

@@ -22,4 +22,28 @@ export async function saveWallpaperDb({ group_id, path, from_bot = 0, liked = 0 
         return false;
     }
 }
+export function updateWallpaperGroup(imageId, newGroup) {
+    try {
+        db.prepare("UPDATE images SET group_id = ? WHERE id = ?").run(newGroup, imageId);
+        return true;
+    } catch (error) {
+        console.error("Error updating wallpaper group:", error);
+        return false;
+    }
+}
+export function deleteImageDB(imageId) {
+    try {
+        const stmt = db.prepare("DELETE FROM images WHERE id = ?");
+        const result = stmt.run(imageId);
 
+        if (result.changes === 0) {
+            console.warn(`No record found for imageId: ${imageId}`);
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Error deleting wallpaper from database:", error);
+        return false;
+    }
+}

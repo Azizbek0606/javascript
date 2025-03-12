@@ -39,10 +39,12 @@ canvas{
     font-size: 14px;
     border-radius: 5px;
     animation: fadeIn 0.5s;
+    backdrop-filter: blur(3px);
+    z-index: 999999999999;
 }
-.message-box.info { background-color: rgba(33, 65, 153, 0.819); }
-.message-box.success { background-color: rgba(30, 163, 105, 0.823); }
-.message-box.error { background-color: rgba(218, 44, 136, 0.91); }
+.message-box.info { background-color: rgba(33, 65, 153, 0.1); }
+.message-box.success { background-color: rgba(30, 163, 105, 0.1); }
+.message-box.error { background-color: rgba(218, 44, 136, 0.1); }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }

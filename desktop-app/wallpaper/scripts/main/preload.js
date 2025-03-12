@@ -17,6 +17,8 @@ contextBridge.exposeInMainWorld("myAPI", {
     // /////////////////////////////////////image methods //////////////////////////////////
     getGroupRequest: () => ipcRenderer.send("get-groups"),
     uploadWallpaper: (data) => ipcRenderer.send("upload-wallpaper", data),
+    getAllWallpaper: () => ipcRenderer.send("get-all-wallpaper"),
+    getLikeStatus: (imageId) => ipcRenderer.invoke("getLikeStatus", imageId)
 });
 
 contextBridge.exposeInMainWorld("electronAPI", {
@@ -35,4 +37,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
     // ///////////////////////////////// image methods //////////////////////////////
     groupsResponse: (callback) => ipcRenderer.on("groups", (event, message) => callback(message)),
     saveImagesResponse: (callback) => ipcRenderer.on("upload-wallpaper-success", (event, message) => callback(message)),
+    wallpaperResponse: (callback) => ipcRenderer.on("all-wallpapers", (event, message) => callback(message)),
+    loadImages: (limit, offset) => ipcRenderer.invoke("load-images", { limit, offset }),
+    getWallpaperById: (imageId) => ipcRenderer.invoke("getWallpaperById", imageId),
+    updateWallpaperGroup: (imageId, newGroup) => ipcRenderer.invoke("updateWallpaperGroup", imageId, newGroup),
+    deleteWallpaper: (imageId) => ipcRenderer.invoke("delete-wallpaper", imageId),
+    updateLikeStatus: (imageId, newStatus) => ipcRenderer.invoke("updateLikeStatus", imageId, newStatus)
 });
