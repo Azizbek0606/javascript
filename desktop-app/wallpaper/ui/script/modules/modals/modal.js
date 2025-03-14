@@ -70,8 +70,7 @@ export function createModal({
                     }
                     inputField.appendChild(option);
                 });
-            }
-            else if (input.type === "checkbox") {
+            } else if (input.type === "checkbox") {
                 inputField = document.createElement("input");
                 inputField.type = "checkbox";
                 inputField.checked = input.checked || false;
@@ -82,6 +81,14 @@ export function createModal({
                 if (input.type === "file" && input.accept) {
                     inputField.accept = input.accept;
                 }
+
+                if (input.type === "time") {
+                    const now = new Date();
+                    const hours = String(now.getHours()).padStart(2, "0");
+                    const minutes = String(now.getMinutes()).padStart(2, "0");
+                    inputField.value = input.value || `${hours}:${minutes}`;
+                }
+
             }
 
             inputField.placeholder = input.placeholder || "";

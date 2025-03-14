@@ -1,9 +1,4 @@
 import { db } from './path_db.js';
-export function getGroups() {
-    const groups = db.prepare("SELECT * FROM image_group").all();
-
-    return groups.length ? groups : null;
-}
 export async function getAllImages(limit = 10, offset = 0) {
     db.pragma("synchronous = OFF");
     db.pragma("cache_size = -10000");
@@ -35,4 +30,7 @@ export function getWallpaperById(imageId) {
         return null;
     }
 }
-
+export function getLatestImage() {
+    const row = db.prepare("SELECT * FROM images ORDER BY created_at DESC LIMIT 1").get();
+    return row || null;
+}

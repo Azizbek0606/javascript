@@ -44,7 +44,6 @@ export function newUser(userData) {
 export function updateUsernamedb(newUsername, system_user) {
     const updateUser = db.prepare(`UPDATE users SET user_name = ? WHERE system_user = ?`);
     let status = updateUser.run(newUsername, system_user);
-
     return status.changes > 0 ? { success: true } : { success: false };
 }
 export function updateAvatardb(imagePath, systemUsername) {

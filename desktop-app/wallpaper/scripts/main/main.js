@@ -5,10 +5,12 @@ import { fileURLToPath } from "url";
 import { app, BrowserWindow, ipcMain } from "electron";
 import { loginFunc, signUpFunc, updateUsername, addAvatarToProfile, updatePassword, updateEmail } from "../functions/registration.js";
 import { getSystemUser } from "../services/db_register.js";
-import { getGroups, getAllImages, getWallpaperById } from "../services/db_manager.js";
+import { getAllImages, getLatestImage, getWallpaperById } from "../services/db_manager.js";
 import { saveWallpaper, processWallpapers, deleteWallpaper } from "../functions/wallpaperMethod.js";
-import { updateWallpaperGroup } from "../services/wallpaperCRUD.js";
+import { deleteGroup, getGroupAndCategory, getImageGroupById, getImageGroups, updateGroup, updateWallpaperGroup } from "../services/wallpaperCRUD.js";
 import { db } from "../services/path_db.js";
+import { getWeatherData } from "../integration/weatherData.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -36,15 +38,12 @@ function createWindow(type, options, file) {
     win.on("closed", () => (type === "login" ? (loginWindow = null) : (mainWindow = null)));
     return win;
 }
-
 function createLoginWindow() {
     loginWindow = createWindow("login", {}, "login");
 }
-
 function createMainWindow() {
     mainWindow = createWindow("main", {}, "index");
 }
-
 app.whenReady().then(async () => {
     if (process.env.NODE_ENV === "development") {
         try {
@@ -59,15 +58,12 @@ app.whenReady().then(async () => {
 
     checkUser ? createMainWindow() : createLoginWindow();
 });
-
 ipcMain.on("window-minimise", (event) => {
     BrowserWindow.fromWebContents(event.sender)?.minimize();
 });
-
 ipcMain.on("window-close", (event) => {
     BrowserWindow.fromWebContents(event.sender)?.close();
 });
-
 ipcMain.on("login", (event, message) => {
     let login = loginFunc(message);
     if (login.success) {
@@ -78,7 +74,6 @@ ipcMain.on("login", (event, message) => {
         event.reply("login-error", login.message);
     }
 });
-
 ipcMain.on("register", (event, message) => {
     let signUp = signUpFunc(message);
     if (signUp.success) {
@@ -89,7 +84,6 @@ ipcMain.on("register", (event, message) => {
         event.reply("sign-up-error", signUp.error);
     }
 });
-
 function sendUserData(event) {
     const updatedUser = getSystemUser(os.userInfo().username);
     event.reply("userData", {
@@ -97,9 +91,7 @@ function sendUserData(event) {
         profile_image: updatedUser?.profile_image || "default"
     });
 }
-
 ipcMain.on("get-userData", sendUserData);
-
 ipcMain.on("updateName", (event, data) => {
     try {
         let updatedUser = updateUsername(data);
@@ -165,11 +157,9 @@ ipcMain.on("updateEmail", (event, data) => {
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") app.quit();
 });
-function sendGroup(event) {
-    let groups = getGroups();    
-    event.reply("groups", groups);
-}
-ipcMain.on("get-groups", sendGroup);
+ipcMain.handle("getGroup", async () => {
+    return await getImageGroups();
+});
 ipcMain.on("upload-wallpaper", async (event, data) => {
     try {
         if (!data || !data.name || !data.buffer) {
@@ -228,4 +218,49 @@ ipcMain.handle("updateLikeStatus", async (event, imageId, newStatus) => {
         throw error;
     }
 });
-
+ipcMain.handle("getGroupById", async (event) => {
+    return await getGroupAndCategory();
+});
+ipcMain.handle("updateGroup", async (event, data) => {
+    try {
+        const updated = await updateGroup(data);
+        return updated;
+    } catch (error) {
+        console.error("error while updating group:", error);
+        return { status: "error", message: "error while updating group" };
+    }
+})
+ipcMain.handle("deleteGroup", (event, data) => {
+    try {
+        const deleted = deleteGroup(data);
+        return deleted;
+    } catch (error) {
+        console.error("error while deleting group:", error);
+        return { status: "error", message: "error while deleting group" };
+    }
+});
+ipcMain.handle("getImageGroupById", (event, data) => {
+    try{
+        let groupById = getImageGroupById(data);
+        return groupById;
+    }catch(e){
+        console.error("error while getting group by id:", e);
+        return { status: "error", message: "error while getting group by id" };
+    }
+});
+ipcMain.handle("getWeatherData", async(event) => {
+    try{
+        return await getWeatherData();
+    }catch(e){
+        console.error("error while getting weather data:", e);
+        return { status: "error", message: "error while getting weather data" };
+    }
+});
+ipcMain.handle("getLatestImage", (event) => {
+    try{
+        return getLatestImage();
+    }catch(e){
+        console.error("error while getting latest image:", e);
+        return { status: "error", message: "error while getting latest image" };
+    }
+})

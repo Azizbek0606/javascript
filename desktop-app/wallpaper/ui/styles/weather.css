@@ -1,0 +1,108 @@
+.weather_information{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+}
+.reloadAnimation{
+    position: absolute;
+    width: 450px;
+    height: 90px;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 10px 10px 10px 50px;
+    z-index: 990000;
+}
+.animationBox{
+    width: 80px;
+    height: 80px;
+    margin: 5px auto;
+}
+.animationBox > img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.weather_information > div{
+    width: 60%;
+    height: 100%;
+}
+.currentWeather{
+    width: 40% !important;
+}
+.temperature {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.temperature >  .mainWeatherIcon{
+    width: 60px;
+    height: 60px;
+}
+.temperature > .mainWeatherIcon img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.temperature div:last-child{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+.sunTime{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.sunrise , .sunset{
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    gap: 5px;
+}
+.sunriseIcon, .sunsetIcon{
+    width: 50px;
+    height: 50px;
+}
+.sunriseIcon img, .sunsetIcon img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.sunTimeContext{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: start;
+    gap: 10px;
+    padding-top: 10px;
+}
+.sunset{
+    position: relative;
+}
+.reloadBtn{
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    bottom: 5px;
+    right: 5px;
+    position: absolute;
+    cursor: pointer;
+}
+.reloadBtn img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

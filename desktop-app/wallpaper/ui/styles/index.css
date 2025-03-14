@@ -221,6 +221,25 @@
     width: 100px;
     height: 100%;
     border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    padding: 10px;
+}
+.last_saved_image{
+    width: 100%;
+    height: 75%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.last_saved_image img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.last_saved_block h4{
+    font-size: 0.8em;
 }
 .group_inducator{
     width: 380px;
@@ -449,6 +468,7 @@ input[type="range"]::-webkit-slider-thumb{
 }
  .load_more_images{
     width: 80%;
+    height: 40px;
     text-align: center;
     padding: 10px 0;
     cursor: pointer;

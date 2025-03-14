@@ -35,12 +35,18 @@ contextBridge.exposeInMainWorld("electronAPI", {
     // ///////////////////////////// CRUD Profile methods ///////////////////////////////
 
     // ///////////////////////////////// image methods //////////////////////////////
-    groupsResponse: (callback) => ipcRenderer.on("groups", (event, message) => callback(message)),
+    getGroup: () => ipcRenderer.invoke("getGroup"),
     saveImagesResponse: (callback) => ipcRenderer.on("upload-wallpaper-success", (event, message) => callback(message)),
     wallpaperResponse: (callback) => ipcRenderer.on("all-wallpapers", (event, message) => callback(message)),
     loadImages: (limit, offset) => ipcRenderer.invoke("load-images", { limit, offset }),
     getWallpaperById: (imageId) => ipcRenderer.invoke("getWallpaperById", imageId),
     updateWallpaperGroup: (imageId, newGroup) => ipcRenderer.invoke("updateWallpaperGroup", imageId, newGroup),
     deleteWallpaper: (imageId) => ipcRenderer.invoke("delete-wallpaper", imageId),
-    updateLikeStatus: (imageId, newStatus) => ipcRenderer.invoke("updateLikeStatus", imageId, newStatus)
+    updateLikeStatus: (imageId, newStatus) => ipcRenderer.invoke("updateLikeStatus", imageId, newStatus),
+    getGroupById: (data) => ipcRenderer.invoke("getGroupById", data),
+    updateGroup: (data) => ipcRenderer.invoke("updateGroup", data),
+    deleteGroup: data => ipcRenderer.invoke("deleteGroup", data),
+    getImageGroupById: (data) => ipcRenderer.invoke("getImageGroupById", data),
+    getWeatherData: () => ipcRenderer.invoke("getWeatherData"),
+    getLatestImage: () => ipcRenderer.invoke("getLatestImage"),
 });

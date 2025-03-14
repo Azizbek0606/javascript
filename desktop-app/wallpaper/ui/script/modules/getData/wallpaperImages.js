@@ -14,66 +14,65 @@ document.querySelector(".reloadBtn").addEventListener("click", () => {
     reloadImages();
 });
 
-function openCreateImageModal() {
+async function openCreateImageModal() {
     try {
-        window.myAPI.getGroupRequest();
+        const groups = await window.electronAPI.getGroup();
 
-        window.electronAPI.groupsResponse((groups) => {
-            console.log("Backenddan kelgan ma'lumot:", groups);
 
-            if (!Array.isArray(groups)) {
-                console.error("Invalid response format. Expected an array.");
-                return;
-            }
+        if (!Array.isArray(groups)) {
+            console.error("Invalid response format. Expected an array.");
+            return;
+        }
 
-            const options = [
-                { value: "", text: "No Group (Optional)" },
-                ...groups.map(group => ({
-                    value: group.id.toString(),
-                    text: group.group_name
-                }))
-            ];
+        const options = [
+            { value: "", text: "No Group (Optional)" },
+            ...groups.map(group => ({
+                value: group.group_id.toString(),
+                text: group.group_name
+            }))
+        ];
 
-            createModal({
-                title: "Create Image",
-                inputs: [
-                    { type: "file", label: "Upload Image", placeholder: "Enter Image" },
-                    {
-                        label: "Choose image group (optional)",
-                        type: "select",
-                        options: options
-                    },
-                ],
-                buttons: [
-                    { text: "Cancel", class: "cancel-btn", action: () => { } },
-                    {
-                        text: "Submit", class: "apply-btn", action: (values) => {
-                            if (values && values[0]) {
-                                const file = values[0];
-                                const group = values[1] || "";
-                                const reader = new FileReader();
+        createModal({
+            title: "Create Image",
+            inputs: [
+                { type: "file", label: "Upload Image", placeholder: "Enter Image" },
+                {
+                    label: "Choose image group (optional)",
+                    type: "select",
+                    options: options
+                },
+            ],
+            buttons: [
+                { text: "Cancel", class: "cancel-btn", action: () => { } },
+                {
+                    text: "Submit", class: "apply-btn", action: async (values) => {
+                        if (values && values[0]) {
+                            const file = values[0];
+                            const group = values[1] || "";
 
-                                reader.onload = function (event) {
-                                    const buffer = event.target.result;
-                                    window.myAPI.uploadWallpaper({
-                                        name: file.name,
-                                        group_id: group,
-                                        buffer
-                                    });
-                                };
+                            try {
+                                const buffer = await file.arrayBuffer();
 
-                                reader.readAsArrayBuffer(file);
+                                await window.myAPI.uploadWallpaper({
+                                    name: file.name,
+                                    group_id: group,
+                                    buffer
+                                });
+
+                            } catch (error) {
+                                console.error("Image upload failed:", error);
                             }
                         }
                     }
-                ]
-            });
+                }
+            ]
         });
 
     } catch (error) {
         console.error("Failed to load groups:", error);
     }
 }
+
 window.electronAPI.saveImagesResponse((data) => {
     showMessage(data.message, data.status);
 });
@@ -148,7 +147,7 @@ export async function renderWallpapers(wallpapers) {
                 <span class="about_this_image">Detail</span>
             </div>
             <div class="img_info">
-                <p>Group: ${wallpaper.group_name}</p>
+                <p title="${wallpaper.group_name}" >Group: ${wallpaper.group_name}</p>
             </div>
         `;
 
@@ -168,24 +167,28 @@ export async function renderWallpapers(wallpapers) {
 
     container.appendChild(fragment);
 }
-function getGroupsAsync() {
-    return new Promise((resolve) => {
-        window.electronAPI.groupsResponse((data) => {
-            resolve(data);
-        });
-        window.myAPI.getGroupRequest();
-    });
+async function getGroupsAsync() {
+    try {
+        const data = await window.electronAPI.getGroup();
+        
+        return data;
+    } catch (error) {
+        console.error("Failed to fetch groups:", error);
+        return [];
+    }
 }
+
 document.addEventListener("click", async (event) => {
     if (event.target.classList.contains("updateBtn")) {
         const imageId = event.target.dataset.id;
 
         const wallpaper = await window.electronAPI.getWallpaperById(imageId);
+        
         if (!wallpaper) return;
 
         const groups = await getGroupsAsync();
         let groupOptions;
-        groupOptions = groups.map(group => ({ value: group.id, text: group.group_name }));
+        groupOptions = groups.map(group => ({ value: group.group_id, text: group.group_name }));
         groupOptions.push({ value: "", text: "No groups" });
 
 

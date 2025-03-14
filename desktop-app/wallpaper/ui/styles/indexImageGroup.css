@@ -1,0 +1,177 @@
+*::-webkit-scrollbar{
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+}
+*::-webkit-scrollbar-thumb{
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+}
+.allGroupWindow{
+    width: 100%;
+    height: 500px;
+    padding: 20px;
+    border-radius: 50px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 909 !important;
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    display: none;
+}
+.groupWindowWrapper{
+    width: 100%;
+    height: 100%;
+}
+.hasImage, .noImage{
+    width: 100%;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+.hasImage{
+    height: 280px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.groupInfoSide{
+    width: 150px;
+    text-overflow: ellipsis;
+    white-space: nowrap;  
+    overflow: hidden;  
+}
+.groupInfoSide p{
+    width: 150px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 0.8em;
+}
+.xWrapper{
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 10px;
+}
+.rowFirst, .rowSecond{
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+}
+.noImage{
+    height: 180px;
+    border: none;
+    overflow-y: auto;
+    padding: 10px 0px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.noImageGroupBox{
+    width: 48%;
+    height: 130px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 10px;
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.noImageGroupBox p{
+    font-size: 0.8em;
+    line-height: 25px;
+    width: 240px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.groupNameBox{
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.groupImageSide{
+    width: 150px;
+    height: 100px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+}
+.imageCount{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 3px 3px 0px rgba(255, 255, 255, 0.5),
+                6px 6px 0px rgba(255, 255, 255, 0.3);
+    padding: 5px 10px;
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    cursor: pointer;
+}
+.groupDeleteBtn, .groupUpdateBtn{
+    position: absolute;
+    font-size: 0.7em;
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    bottom: 5px;
+}
+.groupDeleteBtn{
+    right: 5px;
+    background: rgba(218, 44, 136, 0.3);
+}
+.groupUpdateBtn{
+    left: 5px;
+    background: rgba(255, 255, 255, 0.1);
+}
+.groupImageSide img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.deleteNoImageGroup{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(218, 44, 136, 0.3);
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 0.7em;
+    cursor: pointer;
+}
+.groupDetailInfo{
+    width:350px;
+    height:140px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(5px);
+    position:absolute;
+    left:0;
+    bottom: -10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 10px 15px;
+}
+.groupDetailInfo p{
+    font-size: 0.8em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../styles/main.css">
     <link rel="stylesheet" href="../styles/index.css">
+    <link rel="stylesheet" href="../styles/indexImageGroup.css">
+    <link rel="stylesheet" href="../styles/weather.css">
 </head>
 
 <body>
@@ -57,7 +59,7 @@
                 </div>
                 <div class="control_panel main_style">
                     <div class="setting_box main_style_white open_update_window">Images</div>
-                    <div class="setting_box main_style_white createGroupsBtn">Image Groups</div>
+                    <div class="setting_box main_style_white createGroupsBtn openGroupsWindow">Image Groups</div>
                     <div class="setting_box main_style_white downloadFromBotBtn" style="font-size: 14px;">Download From
                         Bot</div>
                     <div class="setting_box main_style_white openAllImages">Settings</div>
@@ -80,6 +82,19 @@
                         <div class="image_box_wrapper">
                         </div>
                     </div>
+                    <div class="allGroupWindow">
+                        <div class="close_window openGroupsWindow">
+                            &times;
+                        </div>
+                        <div class="groupWindowWrapper">
+                            <div class="hasImage">
+                                <div class="xWrapper">
+                                </div>
+                            </div>
+                            <div class="noImage">
+                            </div>
+                        </div>
+                    </div>
                     <div class="double_info_block">
                         <div class="wallpaper_inducator main_style">
                             <div class="current_image">
@@ -94,16 +109,61 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="weather_information main_style"></div>
+                        <div class="weather_information main_style">
+                            <div class="currentWeather">
+                                <div class="temperature">
+                                    <div class="mainWeatherIcon">
+                                        <img class="mainImageWeather" src="" alt="">
+                                    </div>
+                                    <div>
+                                        <h1 class="mainTemprature">+20°</h1>
+                                        <p class="sencondTemp">+10°</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sunTime">
+                                <div class="sunrise">
+                                    <div class="sunriseIcon">
+                                        <img src="../../assets/resources/images/controller/sun.png" alt="">
+                                    </div>
+                                    <div class="sunTimeContext">
+                                        <h4>Sunrise</h1>
+                                            <p class="sunriseTime">12:00 AM</p>
+                                    </div>
+                                </div>
+                                <div class="sunset">
+                                    <div class="sunsetIcon">
+                                        <img src="../../assets/resources/images/controller/moon.png" alt="">
+                                    </div>
+                                    <div class="sunTimeContext">
+                                        <h4>sunset</h1>
+                                            <p class="sunsetTime">12:00 AM</p>
+                                    </div>
+                                    <div class="reloadBtn">
+                                        <img src="../../assets/resources/images/controller/reload.png" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="quote main_style"></div>
+                    <div class="reloadAnimation" style="display: none;">
+                        <div class="animationBox">
+                            <img src="../../assets/resources/images/controller/loading.gif" alt="">
+                        </div>
+                    </div>
                 </div>
                 <div class="bottom_block">
                     <div class="double_bottom_button ">
                         <div class="change_group main_style"></div>
                         <div class="current_group main_style"></div>
                     </div>
-                    <div class="last_saved_block main_style"></div>
+                    <div class="last_saved_block main_style">
+                        <h4>Last saved</h4>
+                        <div class="last_saved_image">
+                            <img src="" alt="">
+                        </div>
+                    </div>
                     <div class="group_inducator main_style"></div>
                 </div>
             </div>
@@ -114,6 +174,7 @@
     <script type="module" src="../script/indexRender.js"></script>
     <script type="module" src="../script/modules/getData/userProfile.js"></script>
     <script type="module" src="../script/modules/getData/wallpaperImages.js"></script>
+    <script type="module" src="../script/modules/getData/imageGroup.js"></script>
 </body>
 
 </html>
