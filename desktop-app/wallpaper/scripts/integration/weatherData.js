@@ -3,7 +3,7 @@ import puppeteer from "puppeteer";
 export async function getWeatherData() {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto("https://obhavo.uz/Andijan", { waitUntil: "domcontentloaded" });
+    await page.goto("https://obhavo.uz/tashkent", { waitUntil: "domcontentloaded" });
 
     const data = await page.evaluate(() => {
         const forecastEl = document.querySelector(".current-forecast");

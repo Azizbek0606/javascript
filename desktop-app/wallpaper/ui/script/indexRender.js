@@ -69,7 +69,7 @@ async function renderWeatherData() {
 
     let mainImage = document.querySelector(".mainImageWeather");
     let mainTemperature = document.querySelector(".mainTemprature");
-    let secondTemperature = document.querySelector(".secondTemp");
+    let secondTemperature = document.querySelector(".sencondTemprature");
     let sunset = document.querySelector(".sunsetTime");
     let sunrise = document.querySelector(".sunriseTime");
 
@@ -82,7 +82,7 @@ async function renderWeatherData() {
     reloadAnimation.style.display = "none";
 }
 document.addEventListener("click", (event) => {
-    let reloadBtn = event.target.closest(".reloadBtn");
+    let reloadBtn = event.target.closest(".weatherReloadBtn");
     if (reloadBtn) {
         renderWeatherData();
     }

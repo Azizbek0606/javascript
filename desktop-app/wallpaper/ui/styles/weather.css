@@ -90,7 +90,7 @@
 .sunset{
     position: relative;
 }
-.reloadBtn{
+.weatherReloadBtn{
     width: 30px;
     height: 30px;
     padding: 5px;
@@ -101,7 +101,7 @@
     position: absolute;
     cursor: pointer;
 }
-.reloadBtn img{
+.weatherReloadBtn img{
     width: 100%;
     height: 100%;
     object-fit: cover;
