@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
 document.querySelector(".reloadBtn").addEventListener("click", () => {
     reloadImages();
 });
-
 async function openCreateImageModal() {
     try {
         const groups = await window.electronAPI.getGroup();
@@ -72,7 +71,6 @@ async function openCreateImageModal() {
         console.error("Failed to load groups:", error);
     }
 }
-
 window.electronAPI.saveImagesResponse((data) => {
     showMessage(data.message, data.status);
 });
@@ -90,8 +88,6 @@ function openAllImagesWindow() {
         allImageWindowHeloper = false;
     }
 }
-
-
 let offset = 0;
 const limit = 6;
 let isLoading = false;
@@ -118,13 +114,12 @@ async function loadMoreImages() {
 
     isLoading = false;
 }
-
 function removeLoadMoreButton() {
     const loadMoreBtn = document.querySelector(".load_more_images");
     if (loadMoreBtn) {
         loadMoreBtn.remove();
     }
-} 
+}
 loadMoreImages();
 const wallpapersMap = new Map();
 export async function renderWallpapers(wallpapers) {
@@ -170,20 +165,19 @@ export async function renderWallpapers(wallpapers) {
 async function getGroupsAsync() {
     try {
         const data = await window.electronAPI.getGroup();
-        
+
         return data;
     } catch (error) {
         console.error("Failed to fetch groups:", error);
         return [];
     }
 }
-
 document.addEventListener("click", async (event) => {
     if (event.target.classList.contains("updateBtn")) {
         const imageId = event.target.dataset.id;
 
         const wallpaper = await window.electronAPI.getWallpaperById(imageId);
-        
+
         if (!wallpaper) return;
 
         const groups = await getGroupsAsync();
@@ -235,7 +229,6 @@ function updateImageGroupInUI(imageId, newGroup) {
         showMessage("Failed to update image group", "error");
     }
 }
-
 document.body.addEventListener("click", async (event) => {
     if (event.target.classList.contains("deleteBtn")) {
         const imageId = event.target.dataset.id;
@@ -269,8 +262,6 @@ document.body.addEventListener("click", async (event) => {
         });
     }
 });
-
-
 function removeImageFromUI(imageId) {
     const imageBox = document.querySelector(`.image_box[data-id="${imageId}"]`);
     if (imageBox) {
@@ -294,7 +285,6 @@ function reloadImages() {
         if (loadingText.textContent == "Loading...") loadingText.textContent = "Reload";
     });
 }
-
 document.body.addEventListener("click", async (event) => {
     const imageBox = event.target.closest(".image_box");
 
@@ -338,9 +328,6 @@ document.body.addEventListener("click", async (event) => {
         }
     }
 });
-
-
-
 document.body.addEventListener("click", async (event) => {
     if (event.target.classList.contains("likeBtn")) {
         const imageBox = event.target.closest(".image_box");
@@ -360,3 +347,62 @@ document.body.addEventListener("click", async (event) => {
         }
     }
 });
+document.querySelector(".create_new_group_btn").addEventListener("click", () => {
+    createModalGroup();
+});
+async function createModalGroup() {
+    try {
+        let groupData = await window.electronAPI.getCategory();
+
+        createModal({
+            title: "Create New Group",
+            inputs: [
+                {
+                    label: "Group Name",
+                    type: "text",
+                },
+                {
+                    label: "Category",
+                    type: "select",
+                    options: groupData.map(group => ({ value: group.id, text: group.name }))
+                }
+            ],
+            buttons: [
+                {
+                    text: "Cancel",
+                    class: "cancel-btn",
+                    action: () => { }
+                },
+                {
+                    text: "Create",
+                    class: "apply-btn",
+                    action: async (value) => {
+                        try {
+                            let groupName = value[0]?.trim(); // Bo'sh joylarni olib tashlash
+                            let categoryId = value[1];
+
+                            if (!groupName || !categoryId) {
+                                showMessage("Please fill all fields", "error");
+                                return;
+                            }
+
+                            let status = await window.electronAPI.createGroup({"name":groupName, "category":categoryId});
+
+                            if (status) {
+                                showMessage("Group created successfully", "success");
+                            } else {
+                                showMessage("Failed to create group", "error");
+                            }
+                        } catch (error) {
+                            console.error("Error creating group:", error);
+                            showMessage("An unexpected error occurred", "error");
+                        }
+                    }
+                }
+            ]
+        });
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+        showMessage("Failed to load categories", "error");
+    }
+}

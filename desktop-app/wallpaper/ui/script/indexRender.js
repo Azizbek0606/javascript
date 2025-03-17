@@ -1,31 +1,5 @@
-import { startAudio, stopAudio } from "./bg_animation.js";
 import { showMessage } from "./modules/utils/utils.js";
-let volumeControl = document.querySelector("#volumeControl");
-let rangePercent = document.querySelector(".range_percent");
 
-
-volumeControl.addEventListener("input", () => {
-    let percent = volumeControl.value * 100;
-    rangePercent.innerHTML = `${percent.toFixed(0)}%`;
-    document.querySelector(".line_range").style.width = `${percent}%`;
-});
-let soundStatus = false;
-function soundStartStop() {
-    if (soundStatus) {
-        stopAudio();
-        soundStatus = false;
-        document.querySelector(".pauseSound").style.display = "none";
-        document.querySelector(".playSound").style.display = "block";
-    } else {
-        startAudio();
-        soundStatus = true;
-        document.querySelector(".pauseSound").style.display = "block";
-        document.querySelector(".playSound").style.display = "none";
-    }
-}
-document.querySelector(".sound_p_s_button").addEventListener("click", () => {
-    soundStartStop();
-})
 window.myAPI.getProfileInfo();
 
 let defaultImage = "../../assets/resources/images/controller/userAvatar.png"
@@ -44,6 +18,7 @@ window.electronAPI.userData((data) => {
 window.addEventListener("load", async () => {
     if (navigator.onLine) {
         renderWeatherData();
+        getQuote();
     } else {
         showMessage("Connect to the internet to get weather information.")
     }
@@ -51,7 +26,8 @@ window.addEventListener("load", async () => {
 
 window.addEventListener("online", () => {
     showMessage("Internet connected", "success")
-    window.electronAPI.getWeatherData();
+    renderWeatherData();
+    getQuote();
 });
 
 async function renderWeatherData() {
@@ -87,19 +63,40 @@ document.addEventListener("click", (event) => {
         renderWeatherData();
     }
 });
-
 document.addEventListener("DOMContentLoaded", async () => {
     let latestImage = await window.electronAPI.getLatestImage();
+    let imageElement = document.querySelector(".last_saved_image > img");
 
     if (!latestImage) {
-        console.error("Latest image is undefined");
+        imageElement.style.display = "none";
+        imageElement.parentElement.textContent = "No found";
         return;
     }
 
-    let imageElement = document.querySelector(".last_saved_image > img");
     if (imageElement) {
         imageElement.src = latestImage.file_path;
     } else {
         console.error("Element .last_saved_image > img topilmadi");
     }
 });
+document.addEventListener("click", (event) => {
+    let reloadBtn = event.target.closest(".quoteReloadBtn");
+    if (reloadBtn) {
+        getQuote();
+    }
+});
+async function getQuote(){
+    let quoteAnimation = document.querySelector(".quoteLoadingnimation");
+    quoteAnimation.style.display = "block";
+    let quoteText = document.querySelector(".quoteText");
+    let quoteAuthor = document.querySelector(".authorName");
+    let quoteData = await window.electronAPI.getQuote();
+    
+    if (!quoteData){
+        showMessage("somthing went wrong please try again", "error")
+        return;
+    }
+    quoteText.textContent = quoteData.quote;
+    quoteAuthor.textContent = quoteData.author;
+    quoteAnimation.style.display = "none";
+}

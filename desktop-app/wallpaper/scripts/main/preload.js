@@ -49,4 +49,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
     getImageGroupById: (data) => ipcRenderer.invoke("getImageGroupById", data),
     getWeatherData: () => ipcRenderer.invoke("getWeatherData"),
     getLatestImage: () => ipcRenderer.invoke("getLatestImage"),
+    getQuote: () => ipcRenderer.invoke("getQuote"),
+    getSettings: () => ipcRenderer.invoke("getSettings"),
+    updateUserSetting: (data) => ipcRenderer.invoke("updateUserSetting", data),
+    getCategory: () => ipcRenderer.invoke("getCategory"),
+    createGroup: (data) => ipcRenderer.invoke("createGroup", data),
 });

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../styles/index.css">
     <link rel="stylesheet" href="../styles/indexImageGroup.css">
     <link rel="stylesheet" href="../styles/weather.css">
+    <link rel="stylesheet" href="../styles/quote.css">
 </head>
 
 <body>
@@ -62,7 +63,7 @@
                     <div class="setting_box main_style_white createGroupsBtn openGroupsWindow">Image Groups</div>
                     <div class="setting_box main_style_white downloadFromBotBtn" style="font-size: 14px;">Download From
                         Bot</div>
-                    <div class="setting_box main_style_white openAllImages">Settings</div>
+                    <div class="setting_box main_style_white settingsBtn">Settings</div>
                 </div>
             </div>
             <div class="right_side">
@@ -74,6 +75,9 @@
                         <div class="image_control_btn_wrapper">
                             <div class="create_new_btn reloadBtn">
                                 Reload
+                            </div>
+                            <div class="create_new_btn create_new_group_btn">
+                                Create new Group
                             </div>
                             <div class="create_new_btn createImageBtn">
                                 Create New Image
@@ -146,7 +150,29 @@
                             </div>
                         </div>
                     </div>
-                    <div class="quote main_style"></div>
+                    <div class="quoteLoadingnimation">
+                        <div class="quoteAnimationBox">
+                            <img src="../../assets/resources/images/controller/loading.gif" alt="">
+                        </div>
+                    </div>
+                    <div class="quote main_style">
+                        <div class="quoteTitle">
+                            <h3>Quote</h3>
+                        </div>
+                        <div class="quoteBody">
+                            <p class="quoteText">
+                                The greatest glory in living lies not in never falling, but in rising every time we fall.
+                            </p>
+                        </div>
+                        <div class="quotAuthor">
+                            <p class="authorName">
+                                Unknown
+                            </p>
+                        </div>
+                        <div class="quoteReloadBtn">
+                            <img src="../../assets/resources/images/controller/reload.png" alt="">
+                        </div>
+                    </div>
                     <div class="reloadAnimation" style="display: none;">
                         <div class="animationBox">
                             <img src="../../assets/resources/images/controller/loading.gif" alt="">
@@ -175,6 +201,7 @@
     <script type="module" src="../script/modules/getData/userProfile.js"></script>
     <script type="module" src="../script/modules/getData/wallpaperImages.js"></script>
     <script type="module" src="../script/modules/getData/imageGroup.js"></script>
+    <script type="module" src="../script/modules/getData/appIncomingData.js"></script>
 </body>
 
 </html>

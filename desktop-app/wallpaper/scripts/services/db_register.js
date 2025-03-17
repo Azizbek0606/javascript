@@ -1,6 +1,5 @@
 import { db } from './path_db.js';
 import bcrypt from 'bcrypt';
-
 export function getSystemUser(systemUName) {
     if (!systemUName || typeof systemUName !== "string") {
         return null;
@@ -20,13 +19,21 @@ export function newUser(userData) {
     }
 
     try {
+        // FOREIGN KEY ishga tushirilganligini tekshirish
+        db.exec("PRAGMA foreign_keys = ON;");
+
         const saltRounds = 10;
         const hashedPassword = bcrypt.hashSync(userData.password, saltRounds);
 
         const stmt = db.prepare(
             "INSERT INTO users (user_name, password, system_user, email, logged_at) VALUES (?, ?, ?, ?, ?)"
         );
+
         const now = new Date();
+        if (userData.username === "MAJOR") {
+            return { status: "error", message: "Sorry, this username is administration only" };
+        }
+
         const result = stmt.run(
             userData.username,
             hashedPassword,
@@ -35,7 +42,31 @@ export function newUser(userData) {
             now.toISOString().slice(0, 19).replace("T", " ")
         );
 
-        return { success: true, userId: result.lastInsertRowid };
+        // Foydalanuvchi qo‘shilganligini tekshirish
+        const userId = db.prepare("SELECT id FROM users WHERE system_user = ?").get(userData.system_user)?.id;
+
+        if (!userId) {
+            console.error("Error: User ID not found after insertion.");
+            return { error: "User registration failed. Please try again." };
+        }
+
+        console.log("User ID:", userId); // Tekshirish uchun log chiqaramiz
+
+        // Default settings qo'shish
+        const settingsStmt = db.prepare(
+            "INSERT INTO setting (user_id, allow_special, auto_switch, image_changes_interval, app_bg_animation, location) VALUES (?, ?, ?, ?, ?, ?)"
+        );
+
+        settingsStmt.run(
+            userId,          // Foydalanuvchi ID
+            1,               // allow_special (default: 1)
+            1,               // auto_switch (default: 1)
+            3600,            // image_changes_interval (1 soat = 3600 sekund)
+            null,               // app_bg_animation (default: 1)
+            "Tashkent"       // location (default: Tashkent)
+        );
+
+        return { success: true, userId };
     } catch (e) {
         console.error("Error while saving user data:", e);
         return { error: "Error while saving user data" };

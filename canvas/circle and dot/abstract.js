@@ -1,6 +1,5 @@
 import * as THREE from './node_modules/three/build/three.module.min.js';
 
-// Sahna, kamera va renderer yaratish
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -8,7 +7,6 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
-// Oq realistik sfera
 const sphereGeometry = new THREE.SphereGeometry(1.2, 128, 128);
 const sphereMaterial = new THREE.MeshStandardMaterial({
     color: 0x00ffff,
@@ -20,7 +18,6 @@ sphere.castShadow = true;
 sphere.position.set(0, 0, 0);
 scene.add(sphere);
 
-// Yorug'lik
 const ambientLight = new THREE.AmbientLight(0x404040, 1);
 scene.add(ambientLight);
 
@@ -29,13 +26,12 @@ pointLight.position.set(5, 5, 5);
 pointLight.castShadow = true;
 scene.add(pointLight);
 
-// 1500 ta aqua rangli nuqta (birinchi guruh: 2.4-2.8 radius)
 const totalParticlesFirstGroup = 700;
 const particlesGeometryFirstGroup = new THREE.BufferGeometry();
 const positionsFirstGroup = new Float32Array(totalParticlesFirstGroup * 3);
 const velocitiesFirstGroup = new Float32Array(totalParticlesFirstGroup * 3);
 const basePositionsFirstGroup = new Float32Array(totalParticlesFirstGroup * 3);
-const dispersionState = { active: false, progress: 0 }; // Tarqalish holati
+const dispersionState = { active: false, progress: 0 }; 
 
 for (let i = 0; i < totalParticlesFirstGroup; i++) {
     const theta = Math.random() * Math.PI * 2;
@@ -62,7 +58,6 @@ for (let i = 0; i < totalParticlesFirstGroup; i++) {
 particlesGeometryFirstGroup.setAttribute('position', new THREE.BufferAttribute(positionsFirstGroup, 3));
 particlesGeometryFirstGroup.setAttribute('basePosition', new THREE.BufferAttribute(basePositionsFirstGroup, 3));
 
-// Yana 1000 ta nuqta (ikkinchi guruh: 6-8 radius)
 const totalParticlesSecondGroup = 7000;
 const particlesGeometrySecondGroup = new THREE.BufferGeometry();
 const positionsSecondGroup = new Float32Array(totalParticlesSecondGroup * 3);
@@ -72,7 +67,7 @@ const basePositionsSecondGroup = new Float32Array(totalParticlesSecondGroup * 3)
 for (let i = 0; i < totalParticlesSecondGroup; i++) {
     const theta = Math.random() * Math.PI * 2;
     const phi = Math.acos(2 * Math.random() - 1);
-    const radius = 6 + Math.random() * 2; // 6-8 radius
+    const radius = 6 + Math.random() * 2; 
 
     const x = radius * Math.sin(phi) * Math.cos(theta);
     const y = radius * Math.sin(phi) * Math.sin(theta);
@@ -94,7 +89,6 @@ for (let i = 0; i < totalParticlesSecondGroup; i++) {
 particlesGeometrySecondGroup.setAttribute('position', new THREE.BufferAttribute(positionsSecondGroup, 3));
 particlesGeometrySecondGroup.setAttribute('basePosition', new THREE.BufferAttribute(basePositionsSecondGroup, 3));
 
-// Yumaloq nuqtalar uchun ShaderMaterial
 const particlesShaderMaterial = new THREE.ShaderMaterial({
     uniforms: {
         pointSize: { value: 4.0 },
@@ -112,7 +106,7 @@ const particlesShaderMaterial = new THREE.ShaderMaterial({
         void main() {
             vec2 uv = gl_PointCoord - vec2(0.5);
             float dist = length(uv);
-            if (dist > 0.5) discard; // Dumaloq shakl uchun
+            if (dist > 0.5) discard;
             gl_FragColor = vec4(color, 0.9);
         }
     `,
@@ -120,15 +114,12 @@ const particlesShaderMaterial = new THREE.ShaderMaterial({
     blending: THREE.AdditiveBlending
 });
 
-// Birinchi guruh (2.4-2.8 radius) uchun nuqtalar
 const particlesFirstGroup = new THREE.Points(particlesGeometryFirstGroup, particlesShaderMaterial);
 scene.add(particlesFirstGroup);
 
-// Ikkinchi guruh (6-8 radius) uchun nuqtalar
 const particlesSecondGroup = new THREE.Points(particlesGeometrySecondGroup, particlesShaderMaterial);
 scene.add(particlesSecondGroup);
 
-// Ekranni ikki marta bosish hodisasi
 let clickCount = 0;
 document.addEventListener('click', () => {
     clickCount++;
@@ -139,19 +130,15 @@ document.addEventListener('click', () => {
     }
 });
 
-// Kamerani sozlash
-camera.position.z = 10; // Katta radiusni ko'rish uchun kamerani biroz uzoqlashtirdim
+camera.position.z = 10;
 
-// Animatsiya funksiyasi
 let time = 0;
 function animate() {
     requestAnimationFrame(animate);
 
-    // Sferani sekin aylantirish
     sphere.rotation.x += 0.005;
     sphere.rotation.y += 0.005;
 
-    // Birinchi guruh (2.4-2.8 radius)
     const positionsFirst = particlesGeometryFirstGroup.attributes.position.array;
     for (let i = 0; i < totalParticlesFirstGroup; i++) {
         const i3 = i * 3;
@@ -199,7 +186,6 @@ function animate() {
     }
     particlesGeometryFirstGroup.attributes.position.needsUpdate = true;
 
-    // Ikkinchi guruh (6-8 radius)
     const positionsSecond = particlesGeometrySecondGroup.attributes.position.array;
     for (let i = 0; i < totalParticlesSecondGroup; i++) {
         const i3 = i * 3;
@@ -248,5 +234,4 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// Animatsiyani boshlash
 animate();

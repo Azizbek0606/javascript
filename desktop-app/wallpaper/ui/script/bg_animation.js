@@ -22,8 +22,34 @@ const lightning = new THREE.PointLight(0xffffff, 0, 50);
 scene.add(lightning);
 
 const textureLoader = new THREE.TextureLoader();
-const cloudTexture = textureLoader.load( "../../assets/resources/images/bg_animation/cloud.png");
+const cloudTexture = textureLoader.load("../../assets/resources/images/bg_animation/cloud.png");
 
+document.addEventListener("DOMContentLoaded",()=>{
+    let volumeControl = document.querySelector("#volumeControl");
+    let rangePercent = document.querySelector(".range_percent");
+    volumeControl.addEventListener("input", () => {
+        let percent = volumeControl.value * 100;
+        rangePercent.innerHTML = `${percent.toFixed(0)}%`;
+        document.querySelector(".line_range").style.width = `${percent}%`;
+    });
+    let soundStatus = false;
+    function soundStartStop() {
+        if (soundStatus) {
+            stopAudio();
+            soundStatus = false;
+            document.querySelector(".pauseSound").style.display = "none";
+            document.querySelector(".playSound").style.display = "block";
+        } else {
+            startAudio();
+            soundStatus = true;
+            document.querySelector(".pauseSound").style.display = "block";
+            document.querySelector(".playSound").style.display = "none";
+        }
+    }
+    document.querySelector(".sound_p_s_button").addEventListener("click", () => {
+        soundStartStop();
+    })
+});
 
 function createCloud(x, y, z) {
     const material = new THREE.SpriteMaterial({ map: cloudTexture, transparent: true, opacity: 0.8 });
@@ -111,7 +137,7 @@ document.body.appendChild(flashBackground);
 function triggerLightning() {
     const sound = thunderSounds[Math.floor(Math.random() * thunderSounds.length)];
     sound.currentTime = 0;
-    if(soundStatus){
+    if (soundStatus) {
         sound.play();
     }
 

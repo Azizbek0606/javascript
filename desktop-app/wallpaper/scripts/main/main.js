@@ -2,22 +2,66 @@ import path from "path";
 import os from "os";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, Tray, Menu } from "electron";
+import AutoLaunch from "auto-launch"; // Auto-start uchun
+import { switchToNextGroup } from "./mainMethod.js"; // Wallpaper almashtirish funksiyasi
 import { loginFunc, signUpFunc, updateUsername, addAvatarToProfile, updatePassword, updateEmail } from "../functions/registration.js";
 import { getSystemUser } from "../services/db_register.js";
-import { getAllImages, getLatestImage, getWallpaperById } from "../services/db_manager.js";
+import { createGroup, getAllImages, getCategory, getLatestImage, getSettings, getWallpaperById, updateUserSetting } from "../services/db_manager.js";
 import { saveWallpaper, processWallpapers, deleteWallpaper } from "../functions/wallpaperMethod.js";
 import { deleteGroup, getGroupAndCategory, getImageGroupById, getImageGroups, updateGroup, updateWallpaperGroup } from "../services/wallpaperCRUD.js";
 import { db } from "../services/path_db.js";
 import { getWeatherData } from "../integration/weatherData.js";
+import { updateQuote } from "../integration/quote.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let mainWindow, loginWindow;
+let mainWindow, tray;
 
-function createWindow(type, options, file) {
-    let win = new BrowserWindow({
+// **1. Auto-launch sozlash** (kompyuter yoqilishi bilan ishga tushirish)
+const autoLauncher = new AutoLaunch({
+    name: "WallpaperManager",
+    path: process.execPath,
+});
+
+autoLauncher.isEnabled().then((enabled) => {
+    if (!enabled) autoLauncher.enable();
+});
+
+// **2. Tray menyu va boshqaruv**
+function createTray() {
+    tray = new Tray(path.join(__dirname, "../../assets/resources/images/app-icon/icon.png"));
+    const contextMenu = Menu.buildFromTemplate([
+        { label: "Show App", click: showMainWindow },
+        {
+            label: "Exit", click: () => {
+                app.isQuiting = true;
+                app.quit();
+            }
+        }
+    ]);
+
+    tray.setToolTip("Wallpaper Manager");
+    tray.setContextMenu(contextMenu);
+
+    tray.on("click", showMainWindow);
+}
+
+// **3. MainWindow yaratish yoki mavjudini ko‘rsatish**
+function showMainWindow() {
+    if (!mainWindow) {
+        createMainWindow();
+    }
+    if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+    }
+    mainWindow.show();
+}
+
+// **4. MainWindow yaratish**
+function createMainWindow() {
+    mainWindow = new BrowserWindow({
         width: 1000,
         height: 600,
         frame: false,
@@ -30,40 +74,60 @@ function createWindow(type, options, file) {
             preload: path.join(__dirname, "preload.js"),
             nodeIntegration: false,
             contextIsolation: true,
-        },
-        ...options,
+        }
     });
 
-    win.loadFile(path.join(__dirname, `../../ui/templates/${file}.html`));
-    win.on("closed", () => (type === "login" ? (loginWindow = null) : (mainWindow = null)));
-    return win;
-}
-function createLoginWindow() {
-    loginWindow = createWindow("login", {}, "login");
-}
-function createMainWindow() {
-    mainWindow = createWindow("main", {}, "index");
-}
-app.whenReady().then(async () => {
-    if (process.env.NODE_ENV === "development") {
-        try {
-            const { default: reload } = await import("electron-reload");
-            reload(__dirname, { electron: path.join(__dirname, "../../node_modules/electron"), awaitWriteFinish: true });
-        } catch (error) {
-            console.error("electron-reload yuklanmadi:", error);
+    mainWindow.loadFile(path.join(__dirname, "../../ui/templates/index.html"));
+
+    mainWindow.on("close", (event) => {
+        if (!app.isQuiting) {
+            event.preventDefault();
+            mainWindow.hide();
         }
+    });
+
+    mainWindow.on("closed", () => {
+        mainWindow = null; // Oyna yopilganda null qilamiz, tray orqali qayta ochish uchun
+    });
+}
+
+// **5. Ilova boshlanganda UI ochilmasin, faqat wallpaper almashtirish ishlasin**
+app.whenReady().then(() => {
+    createTray();
+
+    if (!app.commandLine.hasSwitch("show-ui")) {
+        console.log("Wallpaper background service ishga tushdi...");
+    } else {
+        showMainWindow();
     }
 
-    const checkUser = getSystemUser(os.userInfo().username);
-
-    checkUser ? createMainWindow() : createLoginWindow();
+    switchToNextGroup();
 });
+
+// **6. Komandalar (UI boshqarish)**
 ipcMain.on("window-minimise", (event) => {
     BrowserWindow.fromWebContents(event.sender)?.minimize();
 });
+
 ipcMain.on("window-close", (event) => {
-    BrowserWindow.fromWebContents(event.sender)?.close();
+    BrowserWindow.fromWebContents(event.sender)?.hide();
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ipcMain.on("login", (event, message) => {
     let login = loginFunc(message);
     if (login.success) {
@@ -240,27 +304,67 @@ ipcMain.handle("deleteGroup", (event, data) => {
     }
 });
 ipcMain.handle("getImageGroupById", (event, data) => {
-    try{
+    try {
         let groupById = getImageGroupById(data);
         return groupById;
-    }catch(e){
+    } catch (e) {
         console.error("error while getting group by id:", e);
         return { status: "error", message: "error while getting group by id" };
     }
 });
-ipcMain.handle("getWeatherData", async(event) => {
-    try{
+ipcMain.handle("getWeatherData", async (event) => {
+    try {
         return await getWeatherData();
-    }catch(e){
+    } catch (e) {
         console.error("error while getting weather data:", e);
         return { status: "error", message: "error while getting weather data" };
     }
 });
 ipcMain.handle("getLatestImage", (event) => {
-    try{
+    try {
         return getLatestImage();
-    }catch(e){
+    } catch (e) {
         console.error("error while getting latest image:", e);
         return { status: "error", message: "error while getting latest image" };
     }
 })
+ipcMain.handle("getQuote", async (event) => {
+    try {
+        return await updateQuote();
+    } catch (e) {
+        console.error("error while getting quote:", e);
+        return { status: "error", message: "error while getting quote" };
+    }
+});
+ipcMain.handle("getSettings", (event) => {
+    try {
+        return getSettings();
+    } catch (e) {
+        console.error("error while getting settings:", e);
+        return { status: "error", message: "error while getting settings" };
+    }
+});
+ipcMain.handle("updateUserSetting", (event, data) => {
+    try {
+        return updateUserSetting(data);
+    } catch (e) {
+        console.error("error while updating user setting:", e);
+        return { status: "error", message: "error while updating user setting" };
+    }
+});
+ipcMain.handle("getCategory", (event) => {
+    try {
+        return getCategory();
+    } catch (e) {
+        console.error("error while getting category:", e);
+        return { status: "error", message: "error while getting category" };
+    }
+});
+ipcMain.handle("createGroup", (event, data) => {
+    try {
+        return createGroup(data);
+    } catch (e) {
+        console.error("error while creating group:", e);
+        return { status: "error", message: "error while creating group" };
+    }
+});
