@@ -1,0 +1,34 @@
+{
+  "name": "modernnotifire",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [
+    "battery",
+    "notifier",
+    "electron",
+    "desktop"
+  ],
+  "author": "MAJOR",
+  "license": "MIT",
+  "description": "A modern battery notification app built with Electron",
+  "devDependencies": {
+    "electron": "^35.0.2",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "systeminformation": "^5.25.11"
+  },
+  "build": {
+    "appId": "MAJOR.modernnotifire",
+    "productName": "ModernNotifire",
+    "files": [
+      "main.js",
+      "notification.html",
+      "img/**/*"
+    ]
+  }
+}
