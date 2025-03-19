@@ -6,15 +6,10 @@ contextBridge.exposeInMainWorld("myAPI", {
     login: (data) => ipcRenderer.send('login', data),
     register: (data) => ipcRenderer.send('register', data),
     getProfileInfo: () => ipcRenderer.send("get-userData"),
-    // ///////////////////////////// CRUD Profile methods ///////////////////////////////
     updateUsername: (data) => ipcRenderer.send('updateName', data),
     uploadProfileImage: (data) => ipcRenderer.send('uploadProfileImage', data),
     updateEmail: (data) => ipcRenderer.send('updateEmail', data),
     updatePassword: (data) => ipcRenderer.send('updatePassword', data),
-    // // ///////////////////////////// CRUD Profile methods ///////////////////////////////
-
-
-    // /////////////////////////////////////image methods //////////////////////////////////
     getGroupRequest: () => ipcRenderer.send("get-groups"),
     uploadWallpaper: (data) => ipcRenderer.send("upload-wallpaper", data),
     getAllWallpaper: () => ipcRenderer.send("get-all-wallpaper"),
@@ -27,14 +22,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
     onRegisterSuccess: (callback) => ipcRenderer.on("sign-up-success", callback),
     onRegisterError: (callback) => ipcRenderer.on("sign-up-error", (event, message) => callback(message)),
     userData: (callback) => ipcRenderer.on("userData", (event, message) => callback(message)),
-    // ///////////////////////////// CRUD Profile methods ///////////////////////////////
     showUpdatedNameStatus: (callback) => ipcRenderer.on("updatedStatus", (event, message) => callback(message)),
     profileImageSaved: (callback) => ipcRenderer.on("profileImageSaved", (_, data) => callback(data)),
     updateEmailStatus: (callback) => ipcRenderer.on("updatedEmailStatus", (event, message) => callback(message)),
     updatePasswordStatus: (callback) => ipcRenderer.on("updatedPasswordStatus", (event, message) => callback(message)),
-    // ///////////////////////////// CRUD Profile methods ///////////////////////////////
-
-    // ///////////////////////////////// image methods //////////////////////////////
     getGroup: () => ipcRenderer.invoke("getGroup"),
     saveImagesResponse: (callback) => ipcRenderer.on("upload-wallpaper-success", (event, message) => callback(message)),
     wallpaperResponse: (callback) => ipcRenderer.on("all-wallpapers", (event, message) => callback(message)),
@@ -54,4 +45,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
     updateUserSetting: (data) => ipcRenderer.invoke("updateUserSetting", data),
     getCategory: () => ipcRenderer.invoke("getCategory"),
     createGroup: (data) => ipcRenderer.invoke("createGroup", data),
+    onImageUpdate: (callback) => ipcRenderer.on("update-wallpaper", (_event, data) => callback(data)),
+    onTimerUpdate: (callback) => ipcRenderer.on("update-timer", (_event, data) => callback(data)),
+    errorMessage: (callback) => ipcRenderer.on("error-message", (_event, data) => callback(data)),
+    groupForChange: () => ipcRenderer.invoke("getGroupsForChangeWallpaper"),
+    getCurrnetGroup: () => ipcRenderer.invoke("getCurrnetGroup"),
+    changeWallpaperGroup: (data) => ipcRenderer.invoke("changeWallpaperGroup", data),
 });

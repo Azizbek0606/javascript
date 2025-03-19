@@ -1,6 +1,6 @@
 import os from "os";
 import { getSystemUser, newUser, updateUsernamedb, updateAvatardb, updatePassworddb, updateEmaildb } from "../services/db_register.js";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs';
 
 export function loginFunc(loginData) {
     let username = loginData.username;
@@ -138,7 +138,6 @@ export function updatePassword(oldPasswordInput, newPassword) {
 
 export function updateEmail(email) {
     if (!email || typeof email !== "string") {
-        console.log(email);
         return { status: "error", message: "Invalid email type" };
     }
 

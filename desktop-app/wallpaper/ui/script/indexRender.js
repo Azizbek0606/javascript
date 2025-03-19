@@ -1,3 +1,4 @@
+import { createModal } from "./modules/modals/modal.js";
 import { showMessage } from "./modules/utils/utils.js";
 
 window.myAPI.getProfileInfo();
@@ -85,18 +86,81 @@ document.addEventListener("click", (event) => {
         getQuote();
     }
 });
-async function getQuote(){
+async function getQuote() {
     let quoteAnimation = document.querySelector(".quoteLoadingnimation");
     quoteAnimation.style.display = "block";
     let quoteText = document.querySelector(".quoteText");
     let quoteAuthor = document.querySelector(".authorName");
     let quoteData = await window.electronAPI.getQuote();
-    
-    if (!quoteData){
+
+    if (!quoteData) {
         showMessage("somthing went wrong please try again", "error")
         return;
     }
     quoteText.textContent = quoteData.quote;
     quoteAuthor.textContent = quoteData.author;
     quoteAnimation.style.display = "none";
+}
+document.addEventListener("DOMContentLoaded", () => {
+    window.electronAPI.onImageUpdate((data) => {
+        document.querySelector("#current_wallpaper").src = data.currentImage;
+        document.querySelector("#previous_wallpaper").src = data.nextImage;
+        document.querySelector("#currentGroupName").textContent = data.groupName
+    });
+
+    window.electronAPI.onTimerUpdate((data) => {
+        const formattedTime = formatTime(data.remainingTime);
+        document.querySelector("#wallpaperTimer").textContent = formattedTime;
+    });
+});
+function formatTime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+window.electronAPI.errorMessage((data) => {
+    showMessage(data.message, data.status);
+});
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector(".change_group").addEventListener("click", () => {
+        openChangeGroup();
+    });
+});
+async function openChangeGroup() {
+    let groups = await window.electronAPI.groupForChange();
+    let currentGroup = await window.electronAPI.getCurrnetGroup();
+
+    if (!groups?.length || !currentGroup) {
+        showMessage("Group not found!", "error");
+        return;
+    }
+    createModal({
+        title: "Change Wallpaper Group",
+        inputs: [
+            {
+                label: "Select Group",
+                type: "select",
+                options: groups.map((group) => ({ value: group.id, text: group.group_name })),
+                value: currentGroup.last_group_id
+            },
+        ],
+        buttons: [
+            {
+                text: "Cancel",
+                class: "cancel-btn",
+                action: () => { },
+            },
+            {
+                text: "Apply",
+                class: "apply-btn",
+                action: (data) => {
+                    if (data[0] != currentGroup.last_group_id) {
+                        window.electronAPI.changeWallpaperGroup(data[0]);
+                    }
+                },
+            },
+        ]
+    });
 }

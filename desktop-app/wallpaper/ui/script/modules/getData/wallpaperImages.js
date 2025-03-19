@@ -378,7 +378,7 @@ async function createModalGroup() {
                     class: "apply-btn",
                     action: async (value) => {
                         try {
-                            let groupName = value[0]?.trim(); // Bo'sh joylarni olib tashlash
+                            let groupName = value[0]?.trim();
                             let categoryId = value[1];
 
                             if (!groupName || !categoryId) {

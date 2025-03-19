@@ -51,7 +51,6 @@ export function updateUserSetting(data) {
         return { success: false, error: "User not found" };
     }
 
-    // Boolean qiymatlarni 0 yoki 1 ga o‘zgartiramiz
     let allow_special_int = allow_special ? 1 : 0;
     let auto_switch_int = auto_switch ? 1 : 0;
 
@@ -84,4 +83,18 @@ export function createGroup(data) {
         console.error("Error creating group:", error);
         return false;
     }
+}
+export function getGroupWithImage() {
+    const stmt = db.prepare(`
+        SELECT DISTINCT ig.*
+        FROM image_group ig
+        INNER JOIN images i ON ig.id = i.group_id
+    `);
+
+    return stmt.all();
+}
+export function getCurrentGroup(){
+    let user = os.userInfo().username;
+    let system_user = getSystemUser(user);
+    return db.prepare("SELECT * FROM setting WHERE user_id = ?").get(system_user.id) || null;
 }

@@ -1,9 +1,16 @@
 import puppeteer from "puppeteer";
+import { getSettings } from "../services/db_manager.js";
 
 export async function getWeatherData() {
+    let location = await getSettings().location;
+    if (!location) {
+        console.error("Location not found!");
+        return false;
+    }
+    
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto("https://obhavo.uz/tashkent", { waitUntil: "domcontentloaded" });
+    await page.goto(`https://obhavo.uz/${location}`, { waitUntil: "domcontentloaded" });
 
     const data = await page.evaluate(() => {
         const forecastEl = document.querySelector(".current-forecast");

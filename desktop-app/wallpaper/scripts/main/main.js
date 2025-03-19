@@ -3,11 +3,10 @@ import os from "os";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { app, BrowserWindow, ipcMain, Tray, Menu } from "electron";
-import AutoLaunch from "auto-launch"; // Auto-start uchun
-import { switchToNextGroup } from "./mainMethod.js"; // Wallpaper almashtirish funksiyasi
+import { switchToNextGroup } from "./mainMethod.js";
 import { loginFunc, signUpFunc, updateUsername, addAvatarToProfile, updatePassword, updateEmail } from "../functions/registration.js";
 import { getSystemUser } from "../services/db_register.js";
-import { createGroup, getAllImages, getCategory, getLatestImage, getSettings, getWallpaperById, updateUserSetting } from "../services/db_manager.js";
+import { createGroup, getAllImages, getCategory, getCurrentGroup, getGroupWithImage, getLatestImage, getSettings, getWallpaperById, updateUserSetting } from "../services/db_manager.js";
 import { saveWallpaper, processWallpapers, deleteWallpaper } from "../functions/wallpaperMethod.js";
 import { deleteGroup, getGroupAndCategory, getImageGroupById, getImageGroups, updateGroup, updateWallpaperGroup } from "../services/wallpaperCRUD.js";
 import { db } from "../services/path_db.js";
@@ -17,21 +16,16 @@ import { updateQuote } from "../integration/quote.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let mainWindow, tray;
+let mainWindow, loginWindow, tray;
 
-// **1. Auto-launch sozlash** (kompyuter yoqilishi bilan ishga tushirish)
-const autoLauncher = new AutoLaunch({
-    name: "WallpaperManager",
+app.setLoginItemSettings({
+    openAtLogin: true, 
+    openAsHidden: true,
     path: process.execPath,
 });
 
-autoLauncher.isEnabled().then((enabled) => {
-    if (!enabled) autoLauncher.enable();
-});
-
-// **2. Tray menyu va boshqaruv**
 function createTray() {
-    tray = new Tray(path.join(__dirname, "../../assets/resources/images/app-icon/icon.png"));
+    tray = new Tray(path.join(__dirname, "../../assets/resources/images/app-icon/W_icon.ico"));
     const contextMenu = Menu.buildFromTemplate([
         { label: "Show App", click: showMainWindow },
         {
@@ -44,11 +38,9 @@ function createTray() {
 
     tray.setToolTip("Wallpaper Manager");
     tray.setContextMenu(contextMenu);
-
     tray.on("click", showMainWindow);
 }
 
-// **3. MainWindow yaratish yoki mavjudini ko‘rsatish**
 function showMainWindow() {
     if (!mainWindow) {
         createMainWindow();
@@ -59,7 +51,6 @@ function showMainWindow() {
     mainWindow.show();
 }
 
-// **4. MainWindow yaratish**
 function createMainWindow() {
     mainWindow = new BrowserWindow({
         width: 1000,
@@ -87,13 +78,39 @@ function createMainWindow() {
     });
 
     mainWindow.on("closed", () => {
-        mainWindow = null; // Oyna yopilganda null qilamiz, tray orqali qayta ochish uchun
+        mainWindow = null;
     });
 }
+function createLoginWindow() {
+    loginWindow = new BrowserWindow({
+        width: 1000,
+        height: 600,
+        frame: false,
+        transparent: true,
+        resizable: false,
+        autoHideMenuBar: true,
+        backgroundColor: "#00000000",
+        icon: path.join(__dirname, "../../assets/resources/images/app-icon/icon.png"),
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+            nodeIntegration: false,
+            contextIsolation: true,
+        }
+    });
 
-// **5. Ilova boshlanganda UI ochilmasin, faqat wallpaper almashtirish ishlasin**
+    loginWindow.loadFile(path.join(__dirname, "../../ui/templates/login.html"));
+
+    loginWindow.on("closed", () => {
+        loginWindow = null;
+    });
+}
 app.whenReady().then(() => {
-    createTray();
+    let checkUser = getSystemUser(os.userInfo().username);
+    if (!checkUser) {
+        createLoginWindow();
+    } else {
+        createTray();
+    }
 
     if (!app.commandLine.hasSwitch("show-ui")) {
         console.log("Wallpaper background service ishga tushdi...");
@@ -104,30 +121,16 @@ app.whenReady().then(() => {
     switchToNextGroup();
 });
 
-// **6. Komandalar (UI boshqarish)**
 ipcMain.on("window-minimise", (event) => {
     BrowserWindow.fromWebContents(event.sender)?.minimize();
 });
-
 ipcMain.on("window-close", (event) => {
     BrowserWindow.fromWebContents(event.sender)?.hide();
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export function getMainWindow() {
+    return mainWindow;
+}
 ipcMain.on("login", (event, message) => {
     let login = loginFunc(message);
     if (login.success) {
@@ -148,6 +151,17 @@ ipcMain.on("register", (event, message) => {
         event.reply("sign-up-error", signUp.error);
     }
 });
+
+
+
+
+
+
+
+
+
+
+
 function sendUserData(event) {
     const updatedUser = getSystemUser(os.userInfo().username);
     event.reply("userData", {
@@ -368,3 +382,22 @@ ipcMain.handle("createGroup", (event, data) => {
         return { status: "error", message: "error while creating group" };
     }
 });
+ipcMain.handle("getGroupsForChangeWallpaper", (event) => {
+    try {
+        return getGroupWithImage();
+    } catch (e) {
+        console.error("error while getting groups for change wallpaper:", e);
+        return { status: "error", message: "error while getting groups for change wallpaper" };
+    }
+});
+ipcMain.handle("getCurrnetGroup", (event) => {
+    try {
+        return getCurrentGroup();
+    } catch (e) {
+        console.error("error while getting current group:", e);
+        return { status: "error", message: "error while getting current group" };
+    }
+});
+ipcMain.handle("changeWallpaperGroup", (event, data) => {
+    switchToNextGroup(data);
+})

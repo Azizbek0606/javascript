@@ -48,6 +48,10 @@ async function openSettingsModal() {
             { text: "Cancel", class: "cancel-btn", action: () => { } },
             {
                 text: "Save", class: "apply-btn", action: async(values) => {
+                    if (values[2] < 599){
+                        showMessage("Image interval should be greater than 600 seconds", "error");
+                        return;
+                    }
                     let status = await window.electronAPI.updateUserSetting(values);
                     if(status.success){
                         showMessage(`Settings updated successfully`, "success");

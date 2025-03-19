@@ -142,10 +142,6 @@ async function updateGroup(groupId, groupName, category_id, currentTime) {
                     let isNameChanged = newGroupName.trim() !== groupName.trim();
                     let isCategoryChanged = Number(categoryId) !== Number(category_id);
                     let isTimeChanged = (currentTime === "null" && newTime) || (currentTime !== "null" && newTime !== currentTime);
-
-                    if (isTimeChanged) {
-                        console.log("ishladi o'zgatgan:" + newTime, currentTime);
-                    }
                     if (isNameChanged || isCategoryChanged || isTimeChanged) {
                         let status = await window.electronAPI.updateGroup({
                             name: newGroupName,
