@@ -9,9 +9,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "roboto-mono";
+            font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
             color: white;
-            font-family: "roboto mono";
         }
 
         body {
@@ -19,32 +18,35 @@
             height: 120px;
             padding: 10px;
             background-color: rgba(0, 0, 0, 0);
+            overflow: hidden;
         }
 
         .wrapper {
             width: 100%;
             height: 100%;
-            background: rgba(185, 11, 92, 0.05);
+            background: rgba(0, 0, 0, 0.05);
             border-radius: 40px 20px 20px 40px;
             overflow: hidden;
             position: relative;
-            border: 1px solid rgba(185, 11, 92, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 10px;
             display: flex;
             justify-content: flex-start;
             align-items: center;
             -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
             gap: 10px;
+            transition: all 0.3s ease;
         }
 
         .shadow_box {
             position: absolute;
             border-radius: 50px;
-            background: rgba(185, 11, 92, 0.7);
             width: 70px;
             height: 70px;
             filter: blur(30px);
             z-index: -99;
+            transition: background 0.3s ease;
         }
 
         .shadow_box_first {
@@ -57,20 +59,23 @@
             right: -10px;
         }
 
-        .inducator_image {
-            width: 100px;
-            height: 100%;
+        .indicator_image {
+            width: 80px;
+            height: 80px;
             backdrop-filter: blur(30px);
             border-radius: 30px;
             background-color: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .inducator_image img {
+        .indicator_image img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
         }
 
         .close_window {
@@ -78,35 +83,49 @@
             height: 30px;
             background-color: rgba(255, 255, 255, 0.1);
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 8px;
+            right: 8px;
             padding: 5px;
-            border-radius: 15px;
+            border-radius: 12px;
             border: 0.5px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            z-index: 10;
+        }
+
+        .close_window:hover {
+            background-color: rgba(255, 255, 255, 0.2);
         }
 
         .close_window img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            cursor: pointer;
         }
 
         .message {
             width: 210px;
             height: auto;
-            padding-top: 10px;
+            padding-top: 5px;
         }
 
         .message p {
             margin: 0;
             padding: 5px;
-            font-size: 13px;
+            font-size: 14px;
+            font-weight: 500;
         }
 
+        .timestamp {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        /* Status styles */
         .info {
             border: 1px solid rgba(15, 79, 95, 0.3);
-            background-color: rgba(15, 79, 95, 0.05)
+            background-color: rgba(15, 79, 95, 0.05);
         }
 
         .info .shadow_box {
@@ -115,7 +134,7 @@
 
         .success {
             border: 1px solid rgba(52, 199, 89, 0.3);
-            background-color: rgba(52, 199, 89, 0.05)
+            background-color: rgba(52, 199, 89, 0.05);
         }
 
         .success .shadow_box {
@@ -124,7 +143,7 @@
 
         .warning {
             border: 1px solid rgba(255, 193, 7, 0.3);
-            background-color: rgba(255, 193, 7, 0.05)
+            background-color: rgba(255, 193, 7, 0.05);
         }
 
         .warning .shadow_box {
@@ -132,8 +151,8 @@
         }
 
         .error {
-            background: rgba(185, 11, 92, 0.05);
             border: 1px solid rgba(185, 11, 92, 0.3);
+            background-color: rgba(185, 11, 92, 0.05);
         }
 
         .error .shadow_box {
@@ -144,25 +163,50 @@
 
 <body>
     <div class="wrapper">
-        <div class="close_window">
-            <img src="img/x_mark.png" alt="">
+        <div class="close_window" id="closeBtn">
+            <img src="img/x_mark.png" alt="Close">
         </div>
         <div class="shadow_box shadow_box_first"></div>
         <div class="shadow_box shadow_box_second"></div>
-        <div class="inducator_image">
-            <img class="inducator_icon" src="" alt="">
+        <div class="indicator_image">
+            <img id="statusIcon" src="" alt="Status">
         </div>
         <div class="message">
-            <p class="message_context"></p>
+            <p id="messageText"></p>
+            <p id="timestampText" class="timestamp"></p>
         </div>
     </div>
+
     <script>
         const { ipcRenderer } = require("electron");
 
-        ipcRenderer.on("show-notification", (event, { status, message }) => {
+        // Oynani yopish uchun
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            ipcRenderer.send('close-notification');
+        });
+
+        // Barcha status klasslarini tozalash
+        function clearStatusClasses() {
+            const wrapper = document.querySelector(".wrapper");
+            wrapper.classList.remove("info", "success", "warning", "error");
+        }
+
+        // Yangi bildirishnoma ko'rsatish
+        ipcRenderer.on("show-notification", (event, { status, message, timestamp }) => {
+            clearStatusClasses();
             document.querySelector(".wrapper").classList.add(status);
-            document.querySelector(".message_context").innerText = message;
-            document.querySelector(".inducator_icon").src = `img/${status}.png`;
+            document.getElementById("messageText").textContent = message;
+            document.getElementById("timestampText").textContent = timestamp;
+            document.getElementById("statusIcon").src = `img/${status}.png`;
+        });
+
+        // Mavjud bildirishnomani yangilash
+        ipcRenderer.on("update-notification", (event, { status, message, timestamp }) => {
+            clearStatusClasses();
+            document.querySelector(".wrapper").classList.add(status);
+            document.getElementById("messageText").textContent = message;
+            document.getElementById("timestampText").textContent = timestamp;
+            document.getElementById("statusIcon").src = `img/${status}.png`;
         });
     </script>
 </body>

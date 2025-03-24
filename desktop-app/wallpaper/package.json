@@ -16,8 +16,7 @@
   "scripts": {
     "start": "electron .",
     "dev": "NODE_ENV=development electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder --win --x64"
+    "build": "electron-builder"
   },
   "dependencies": {
     "axios": "1.8.3",
@@ -37,46 +36,13 @@
   "build": {
     "appId": "com.major.wallpaper",
     "productName": "Wallpaper Manager",
-    "asar": true,
-    "directories": {
-      "output": "dist",
-      "buildResources": "assets/resources"
-    },
-    "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "icon": "assets/resources/images/app-icon/w_icon.ico"
-    },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
-    },
     "files": [
-      {
-        "from": "scripts/",
-        "to": "scripts/",
-        "filter": ["**/*"]
-      },
-      "preload.js",
-      "index.html",
-      "renderer.js",
-      "node_modules/**/*"
+      "scripts/**/*",
+      "node_modules/**/*",
+      "assets/resources/**/*",
+      "ui/**/*",
+      "database/**/*"
     ],
-    "extraResources": [
-      {
-        "from": "assets/resources/",
-        "to": "resources/",
-        "filter": ["**/*"]
-      }
-    ]
+    "icon": "assets/resources/images/app-icon/w_icon.ico"
   }
 }
