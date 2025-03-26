@@ -117,11 +117,11 @@ function getProjectsByCategory(msg, bot) {
 
     const categories = getCategories();
 
-    if (categories.length === 0) {
+    if (categories.filtered.length === 0) {
         return bot.sendMessage(chatId, "⚠️ No categories found.");
     }
-
-    const categoryList = categories.join("\n");
+    console.log(categories.categoryList);
+    const categoryList = categories.filtered.join("\n");
     bot.sendMessage(chatId, `🔎 Send the category ID to see projects:\n\n📂 Available Categories:\n${categoryList}`);
 
     bot.once("message", (response) => {

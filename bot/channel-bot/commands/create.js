@@ -28,13 +28,16 @@ async function createNewFile(bot, msg) {
             userData.step = 2;
 
             const categories = getCategories();
-            const categoriesList = categories.map((cat) => `${cat}`).join('\n');
-            return bot.sendMessage(chatId, `Choose file category (Send only ID)\n\n${categoriesList}\n\nUse a number between 1 and ${categories.length}.`);
+            if (categories.filtered.length == 0) {
+                return bot.sendMessage(chatId, "⚠️ No categories found.");
+            }
+            const categoriesList = categories.filtered.map((cat) => `${cat}`).join('\n');
+            return bot.sendMessage(chatId, `Choose file category (Send only ID)\n\n${categoriesList}\n\nUse a number between 1 and ${categories.filtered.length}.`);
 
         case 2:
             const categoryId = parseInt(msg.text);
-            if (!checkNumber(msg.text) || categoryId < 1 || categoryId > getCategories().length) {
-                return bot.sendMessage(chatId, `❌ Invalid ID: ${msg.text}\nChoose a valid number between 1 and ${getCategories().length}.`);
+            if (!checkNumber(msg.text) || categoryId < 1 || categories.categoryList.some(c => c.id != categoryId)) {
+                return bot.sendMessage(chatId, `❌ Invalid ID: ${msg.text}\nChoose a valid number.`);
             }
             userData.data.categoryId = categoryId;
             userData.step = 3;
