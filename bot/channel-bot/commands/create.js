@@ -6,6 +6,11 @@ const { getCategories, createFile, checkExistingFiles } = require("../services/d
 
 const userSteps = {};
 
+// Move findId outside the switch statement
+function findId(categories, id) {
+    return categories.categoryList.some(item => item.id === parseInt(id));
+}
+
 async function createNewFile(bot, msg) {
     const chatId = msg.chat.id;
 
@@ -28,16 +33,17 @@ async function createNewFile(bot, msg) {
             userData.step = 2;
 
             const categories = getCategories();
-            if (categories.filtered.length == 0) {
+            if (categories.filtered.length === 0) {
                 return bot.sendMessage(chatId, "⚠️ No categories found.");
             }
             const categoriesList = categories.filtered.map((cat) => `${cat}`).join('\n');
-            return bot.sendMessage(chatId, `Choose file category (Send only ID)\n\n${categoriesList}\n\nUse a number between 1 and ${categories.filtered.length}.`);
+            return bot.sendMessage(chatId, `Choose file category (Send only ID)\n\n${categoriesList}\n\nUse a number`);
 
         case 2:
             const categoryId = parseInt(msg.text);
-            if (!checkNumber(msg.text) || categoryId < 1 || categories.categoryList.some(c => c.id != categoryId)) {
-                return bot.sendMessage(chatId, `❌ Invalid ID: ${msg.text}\nChoose a valid number.`);
+            const categoriesForCheck = getCategories(); // Get categories again for validation
+            if (!checkNumber(msg.text) || categoryId < 1 || !findId(categoriesForCheck, msg.text)) {
+                return bot.sendMessage(chatId, `❌ Invalid ID: ${msg.text}\nChoose a valid number from the list.`);
             }
             userData.data.categoryId = categoryId;
             userData.step = 3;

@@ -1,12 +1,20 @@
-const { getFilesById, updateFileInfo, getCategories } = require('../services/data_manager');
+const { getFilesById, updateFileInfo, getCategories, checkExistingFiles } = require('../services/data_manager');
 const { checkText } = require('../utils/utils');
-const userSteps = {};
 
-let allowedUpdates = ["name", "category_id", "description"];
+const userSteps = {};
+const allowedUpdates = ["name", "category_id", "description"];
+
+function findId(categories, id) {
+    return categories.categoryList.some(item => item.id === parseInt(id));
+}
 
 function updateUser(bot, msg) {
     const chatId = msg.chat.id;
-    let text = msg.text.trim();
+    const text = msg.text?.trim();
+
+    if (!text) {
+        return bot.sendMessage(chatId, "❌ No input provided!");
+    }
 
     if (!userSteps[chatId]) {
         userSteps[chatId] = { step: 1, data: {} };
@@ -15,94 +23,92 @@ function updateUser(bot, msg) {
 
     let userData = userSteps[chatId];
 
-    if (userData.step === 1) {
-        const files = getFilesById(text);
-
-        if (Array.isArray(files) && files.length > 0) {
-            userData.fileId = text;
-            userData.step = 2;
-
-            return bot.sendMessage(chatId, "✅ File found! Please select an option:", {
-                reply_markup: {
-                    keyboard: [
-                        ["name", "category_id"],
-                        ["description"]
-                    ],
-                    resize_keyboard: true,
-                    one_time_keyboard: true
-                }
-            });
-        } else {
-            return bot.sendMessage(chatId, "❌ File not found, please try again.");
-        }
-    }
-
-    else if (userData.step === 2) {
-        if (allowedUpdates.includes(text)) {
-            userData.choice = text;
-            userData.step = 3;
-            if (userData.choice === "category_id") {
-                const categories = getCategories().map(cat => {
-                    const parts = cat.split(" - ");
-                    return { id: parseInt(parts[0], 10), name: parts[1] };
-                });
-
-                return bot.sendMessage(chatId, `Choose a category for this file:`, {
+    switch (userData.step) {
+        case 1:
+            const files = getFilesById(text);
+            if (Array.isArray(files) && files.length > 0) {
+                userData.fileId = text;
+                userData.step = 2;
+                return bot.sendMessage(chatId, "✅ File found! Please select an option:", {
                     reply_markup: {
-                        keyboard: categories.map(cat => [`${cat.id} - ${cat.name}`]),
+                        keyboard: [
+                            ["name", "category_id"],
+                            ["description"]
+                        ],
                         resize_keyboard: true,
                         one_time_keyboard: true
                     }
                 });
             }
+            return bot.sendMessage(chatId, "❌ File not found, please try again.");
+
+        case 2:
+            if (!allowedUpdates.includes(text)) {
+                return bot.sendMessage(chatId, "⚠️ Invalid field! Please select one from the list.");
+            }
+
+            userData.choice = text;
+            userData.step = 3;
+
+            if (text === "category_id") {
+                const categories = getCategories();
+                if (!categories.filtered?.length) {
+                    delete userSteps[chatId];
+                    return bot.sendMessage(chatId, "❌ No categories available!");
+                }
+                const categoryList = categories.filtered.map(cat => `${cat}`).join('\n');
+                return bot.sendMessage(chatId, `Choose a category ID from the list:\n\n${categoryList}\n\nSend only the ID number`);
+            }
 
             return bot.sendMessage(chatId, `✍️ Send a new value for: ${userData.choice}`, {
-                reply_markup: {
-                    remove_keyboard: true
-                }
+                reply_markup: { remove_keyboard: true }
             });
-        } else {
-            return bot.sendMessage(chatId, "⚠️ Invalid field! Please select one from the list.");
-        }
-    }
 
-    else if (userData.step === 3) {
-        if (text !== "") {
+        case 3:
+            if (!text) {
+                return bot.sendMessage(chatId, "⚠️ Value cannot be empty! Please enter a valid value.");
+            }
 
-            const categories = getCategories().map(cat => parseInt(cat.split(" - ")[0], 10));
+            let valueToUpdate = text;
 
             if (userData.choice === "category_id") {
-                const categoryIds = getCategories().map(cat => parseInt(cat.split(" - ")[0], 10));
+                const categoryId = parseInt(text, 10);
+                const categories = getCategories();
 
-                const categoryId = parseInt(text.split(" - ")[0], 10);
-
-                if (!categoryIds.includes(categoryId)) {
-                    return bot.sendMessage(chatId, `⚠️ Invalid category ID! Please enter a valid ID between ${Math.min(...categoryIds)} and ${Math.max(...categoryIds)}.`);
+                if (isNaN(categoryId) || !findId(categories, text)) {
+                    const categoryList = categories.filtered.map(cat => `${cat}`).join('\n');
+                    return bot.sendMessage(chatId, `⚠️ Invalid category ID! Please select a valid ID from:\n\n${categoryList}`);
                 }
-                text = categoryId
+                valueToUpdate = categoryId;
+            }
+            else if (userData.choice === "name") {
+                if (!checkText(text)) {
+                    return bot.sendMessage(chatId, "⚠️ Invalid file name! Use only letters and numbers, no special characters.");
+                }
+                if (!checkExistingFiles(text.trim())) {
+                    return bot.sendMessage(chatId, "⚠️ File with this name already exists.");
+                }
+                valueToUpdate = text.trim();
+            }
+            else if (userData.choice === "description") {
+                valueToUpdate = text.trim();
             }
 
-            
-            if(userData.choice === "name"){
-                if(!checkText(text)){
-                    return bot.sendMessage(chatId, "⚠️ Invalid file name! Please enter a valid name.");
-                }
-            }
-            const success = updateFileInfo(userData.choice, text, userData.fileId);
+            const success = updateFileInfo(userData.choice, valueToUpdate, userData.fileId);
 
-            if (success === true) {
-                bot.sendMessage(chatId, "✅ File updated successfully!");
+            if (success) {
+                bot.sendMessage(chatId, `✅ File ${userData.choice} updated successfully!`);
             } else {
                 bot.sendMessage(chatId, "❌ Error updating file. Please try again.");
             }
 
             delete userSteps[chatId];
-            return;
-        } else {
-            return bot.sendMessage(chatId, "⚠️ Value cannot be empty! Please enter a valid value.");
-        }
-    }
+            break;
 
+        default:
+            delete userSteps[chatId];
+            return bot.sendMessage(chatId, "❌ Process error! Please start again with the update command.");
+    }
 }
 
 module.exports = { updateUser, userSteps };

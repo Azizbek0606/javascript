@@ -12,7 +12,7 @@ const ADMIN_ID = process.env.ADMIN_CHAT_ID;
 
 function allCategory(msg, bot) {
     const chatId = msg.chat.id;
-    const categories = getCategories();
+    const categories = getCategories().filtered;
 
     if (categories.length === 0) {
         return bot.sendMessage(chatId, "⚠️ No categories found.");
@@ -120,7 +120,6 @@ function getProjectsByCategory(msg, bot) {
     if (categories.filtered.length === 0) {
         return bot.sendMessage(chatId, "⚠️ No categories found.");
     }
-    console.log(categories.categoryList);
     const categoryList = categories.filtered.join("\n");
     bot.sendMessage(chatId, `🔎 Send the category ID to see projects:\n\n📂 Available Categories:\n${categoryList}`);
 
