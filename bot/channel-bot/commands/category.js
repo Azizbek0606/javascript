@@ -43,7 +43,7 @@ function editCategories(msg, bot) {
         return bot.sendMessage(chatId, "⛔ You do not have permission to edit a category.");
     }
 
-    bot.sendMessage(chatId, "📝 Send the category ID and new name in this format:\n\n`id - new_name`");
+    bot.sendMessage(chatId, `Category List:\n\n${getCategories().filtered.map((cat) => `${cat}`).join('\n') }\n\n📝 Send the category ID and new name in this format:\n\n'id - new_name'`);
 
     bot.once("message", (response) => {
         if (!response.text.includes(" - ")) {
