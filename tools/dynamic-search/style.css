@@ -6,6 +6,13 @@
     list-style: none;
     text-decoration: none;
 }
+*::-webkit-scrollbar{
+    width: 10px;
+}
+*::-webkit-scrollbar-thumb{
+    background: #2280dd;
+    border-radius: 10px;
+}
 body{
     background: #011f2c;
     color: #fff;
@@ -37,20 +44,12 @@ body{
     gap: 10px;
     padding-bottom: 10px;
 }
-*::-webkit-scrollbar{
-    width: 10px;
-}
-*::-webkit-scrollbar-thumb{
-    background: #2280dd;
-    border-radius: 10px;
-}
 .product-card{
     position: relative;
     background: #05438164;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 20px;
+    padding: 5px;
     max-width: 450px;
-    box-shadow: 5px 5px 5px rgba(255,255,255,0.1);
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -81,4 +80,7 @@ body{
 .hidden {
     position: absolute;
     visibility: hidden;
+}
+.selected{
+    background: #2280dd;
 }
